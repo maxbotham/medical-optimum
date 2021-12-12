@@ -1,0 +1,68 @@
+.search-ward-parameters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem;
+}
+.search-ward-input {
+  margin-right: 0.25rem;
+  margin-left: 0.25rem;
+}
+.unselect-ward-button {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  margin-left: 1rem;
+}
+
+.selected-ward-bed-list-title {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+.bed-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  height: 11.5rem;
+  overflow: scroll;
+}
+.ward-result-list {
+    height: 11.5rem!important;
+}
+.bed-result-item {
+  border-radius: 0.5rem;
+  width: 90%;
+  height: 2rem;
+  background-color: lightBlue;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.selected-bed-info {
+  width: 100%;
+}
+.selected-bed-number {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.unselect-bed-button {
+  margin-bottom: 1rem;
+}
+
+.bed-patient-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.view-patient-in-bed {
+  margin-right: 1.5rem;
+}
+
+.change-price-input {
+  margin-bottom: 1rem;
+}

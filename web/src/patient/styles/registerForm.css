@@ -1,0 +1,53 @@
+.register-patient-form{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1.3rem;
+}
+.emergency-contact-information{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.patient-emergency-name{
+    margin-bottom: 1rem;
+}
+.emergency-contact-title{
+    font-size: 1.4rem;
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+}
+.patient-title{
+
+    font-size: 1.4rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    display: flex;
+}
+
+.submit-register-form{
+    margin-top: 2rem;
+}
+
+.patient-register-input{
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+    z-index: 0;
+
+}
+.patient-date-pick{
+    z-index: 3;
+}
+
+.patient-register-emergency{
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.type-of-payer-register{
+    width: 12rem;
+    margin-right: .5rem;
+}

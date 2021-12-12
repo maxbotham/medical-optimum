@@ -1,0 +1,17 @@
+.selected-service-desc{
+    margin-bottom: .5rem;
+}
+
+.selected-service-edit-date{
+    margin-top: 1rem;
+    margin-bottom: .2rem;
+}
+
+.search-service-delete-service{
+    margin-top: 1rem !important;
+}
+
+.search-service-save-service{
+    margin-top: 1rem !important;
+    margin-right: 1rem !important;
+}

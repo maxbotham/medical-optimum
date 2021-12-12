@@ -1,0 +1,34 @@
+.login-details-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.login-details{
+    width: 20rem;
+    height: 10rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #e8e8e8;
+    border-radius: .9rem;
+}
+.username-input-wrapper{
+    width: 100%;
+}
+.password-input-wrapper{
+    margin-top: .6rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+.username-input{
+    width: 100%;
+}
+.password-input{
+    width: 100%;
+}
+.sign-in-button{
+    width: 100%;
+    height: 2rem;
+}

@@ -1,0 +1,23 @@
+.unselect-patient-button{
+    width: 97.5%;
+    display: flex;
+    justify-content: right;
+    padding-right: rem;
+    margin-bottom: 1rem;
+}
+
+.patient-information{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.selected-patient-action-buttons{
+    display: flex;
+    justify-content: left;
+    margin-left: 1rem;
+    flex-wrap: wrap;
+    
+}
+.patient-action-button{
+    margin-right: .5rem !important;
+}

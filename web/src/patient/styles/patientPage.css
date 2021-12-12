@@ -1,0 +1,20 @@
+.patient-page-header{
+    width: 93%;
+    display: flex;
+    padding: 1rem;
+}
+
+.patient-go-back-button{
+    margin-right: 1rem;
+}
+
+.patient-register-button{
+    margin-right: 1rem;
+}
+
+.patient-admit-button{
+    margin-right: 1rem;
+}
+.patient-search-button{
+    margin-right: 1rem;
+}

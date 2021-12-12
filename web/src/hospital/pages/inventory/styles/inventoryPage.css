@@ -1,0 +1,27 @@
+
+
+.choose-service-type-and-date{
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+}
+.search-doctor-input{
+  margin-right: .5rem;
+  margin-bottom: .5rem;
+}
+.edit-selected-values{
+    margin-top: .8rem;
+}
+.inventory-edit-input{
+    margin-right: .5rem !important;
+    margin-top: .5rem !important;
+}
+.add-or-edit{
+    margin-bottom: -1rem !important;
+}
+
+.add-values-title{
+    margin-top: 1.5rem;
+    margin-bottom: -.8rem;
+    font-size: 1rem;
+}

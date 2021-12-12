@@ -1,0 +1,43 @@
+.choose-add-service-type{
+    margin-top: 2rem;
+    width: 43%;
+    margin-left: 2rem;
+}
+
+.add-service-search-item-full{
+    width: 100%;
+    padding: 1rem;
+}
+
+.add-service-search-item-half{
+    width: 50%;
+}
+.adding-service-params{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.add-service-submit-button{
+    margin-bottom: 1rem;
+    margin-left: 2rem;
+    margin-top: 1rem;
+}
+
+.choose-service-type-and-date{
+    display: flex;
+    flex-wrap: wrap;
+}
+.add-service-date-range{
+    width: 43%;
+    margin-left: 2%;
+    margin-top: 2rem;
+    z-index: 3;
+}
+
+.consultation-price-input{
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    width: 95%;
+}

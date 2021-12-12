@@ -1,0 +1,22 @@
+.search-patient-parameters{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1rem;
+    justify-content: center;
+}
+.submit-search-form{
+    display: flex;
+    margin-left: 1rem;
+}
+
+.patient-search-form-title{
+    margin-left: 1rem;
+    font-size: 1.4rem;
+    width: 100%;
+    display: flex;
+}
+
+.search-patient-input{
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}

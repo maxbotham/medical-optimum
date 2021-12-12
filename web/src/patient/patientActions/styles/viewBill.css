@@ -1,0 +1,18 @@
+.bill-item-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bill-item{
+    background-color: lightBlue;
+    width: 80%;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: .7rem;
+    border-radius: .7rem;
+    margin-bottom: .3rem;
+}

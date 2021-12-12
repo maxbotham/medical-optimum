@@ -1,0 +1,40 @@
+.medicine-search-form-title{
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+.search-medicine-input{
+    margin-bottom: .5rem;
+    margin-left: .5rem;
+    z-index: 0;
+}
+.search-medicine-parameters{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.medicine-result-list{
+    height: 7.5rem;
+    overflow: scroll;
+    padding: 1rem;
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+}
+.medicine-result-item{
+    margin-bottom: .5rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: .5rem;
+    background-color: lightBlue;
+    cursor: pointer;
+}
+.selected-medicine-wrapper{
+    padding: 1rem;
+}
+.selected-medicine-title{
+    margin-bottom: 1rem;
+}
+.clear-search-button{
+    margin-top: .75rem;
+}

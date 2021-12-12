@@ -1,0 +1,14 @@
+.hospital-page-header{
+    display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-left: .5rem;
+}
+
+.hospital-select-button{
+    margin-top: 1rem;
+    margin-left: .5rem;
+    margin-right: .5rem;
+}
+

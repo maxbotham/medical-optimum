@@ -1,0 +1,25 @@
+.patient-result-item{
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    margin-top: .2rem;
+    background-color: lightBlue;
+    cursor: pointer;
+    border-radius: .5rem;
+}
+.patient-result-list{
+    height: 21rem;
+    overflow: scroll;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.clear-search-button{
+    display: flex;
+    width: 97.5%;
+    justify-content: right;
+    margin-bottom: .5rem;
+}

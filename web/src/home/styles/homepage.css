@@ -1,0 +1,65 @@
+.sign-out-button-wrapper {
+  height: 2rem;
+  display: flex;
+  justify-content: left;
+  margin-top: 0.4rem;
+  width: 7rem;
+}
+.sign-out-button {
+  text-transform: none !important;
+  font-size: 0.75rem !important;
+}
+
+.home-page-wrapper {
+  display: flex;
+  padding: 1rem;
+  width: 92.5%;
+  height: 100%;
+  flex-wrap: wrap;
+}
+.home-page-header {
+  display: flex;
+  width: 100%;
+}
+
+.home-page-title {
+  font-size: 2.5rem;
+  font-weight: 140;
+  margin-bottom: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.home-page-content-wrapper {
+  width: 100%;
+  height: 98%;
+  display: flex;
+}
+
+.home-page-select-patient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+  background-color: rgb(176, 247, 254);
+  border-radius: 1.5rem;
+  font-size: 3rem;
+  font-weight: 300;
+  cursor: pointer;
+}   
+
+.home-page-select-hospital {
+  display: flex;
+  border-radius: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+  margin-left: 1rem;
+  font-size: 3rem;
+  font-weight: 300;
+  background-color: rgb(227, 227, 227);
+  cursor: pointer;
+}

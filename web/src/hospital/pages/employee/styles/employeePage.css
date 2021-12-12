@@ -1,0 +1,16 @@
+.add-employee-dob{
+    margin-top: .5em;
+    z-index: 3 !important;
+}
+.add-employee-dob-title{
+    margin-bottom: .3rem;
+}
+.edit-selected-values{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.edit-selected-values{
+    z-index: 0!important;
+}

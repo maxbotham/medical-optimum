@@ -1,0 +1,42 @@
+
+
+.doctor-search-form-title{
+    margin-top: 1rem;
+    margin-bottom: .5rem;
+}
+.search-doctor-input{
+    margin-bottom: .5rem;
+    margin-left: .5rem;
+    z-index: 0;
+}
+.search-doctor-parameters{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.doctor-result-list{
+    height: 7.5rem;
+    overflow: scroll;
+    padding: 1rem;
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+}
+.doctor-result-item{
+    margin-bottom: .5rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: .5rem;
+    background-color: lightBlue;
+    cursor: pointer;
+}
+.selected-doctor-wrapper{
+    padding: 1rem;
+}
+.selected-doctor-title{
+    margin-bottom: 1rem;
+}
+.clear-search-button{
+    margin-top: .75rem;
+}
