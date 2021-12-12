@@ -25,33 +25,21 @@ def create_db_table():
         conn.close()
 
 
-def insert_patient(patientID):
+def insert_patient(patient):
     inserted_patient = {"PatientID":"bleh"}
-    
     try:
-       
         conn = connect_to_db()
-        inserted_patient = {"PatientID":"bleh1"}
         cur = conn.cursor()
-        inserted_patient = {"PatientID":"bleh2"}
-        
-        insertParam = """INSERT INTO PATIENT
-                          (PatientID) VALUES (?);"""
-
-        data_tuple = ("P1")
-        cur.execute(insertParam,data_tuple)
-        inserted_patient = {"PatientID":"bleh3"}
+        cur.execute("Insert into PATIENT (PatientID) values (?)",(patient["PatientID"],))
         conn.commit()
-        inserted_patient = {"PatientID":"bleh4"}
         inserted_patient = get_patient_by_id(cur.lastrowid)
-        
     except:
         conn.rollback()
 
     finally:
         conn.close()
 
-    return inserted_patient
+        return inserted_patient
 
 def get_patients():
     patients = []
@@ -141,21 +129,8 @@ def api_get_patient(PatientID):
 
 @app.route('/api/patients/add',  methods = ['POST'])
 def api_add_patient():
-    '''try:
-        pi= request.form['PatientID']
-        with sql.connect("database.db") as conn:
-            cur = conn.cursor()
-            cur.execute("INSERT INTO PATIENT (PatientID) VALUES (?)",(pi) )            
-            conn.commit()
-    except:
-        conn().rollback()
-    finally:
-        conn().close()'''
-    patientID=request.args.get('PatientID')
-    #patient = request.get_json()
-   # patientID = patient["PatientID"]
-    #patientID=requests.form("PatientID")
-    return jsonify(insert_patient(patientID))
+    patient = request.get_json()
+    return jsonify(insert_patient(patient))
 
 @app.route('/api/patients/update',  methods = ['PUT'])
 def api_update_patient():
