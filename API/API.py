@@ -1,10 +1,13 @@
 #!/usr/bin/python
 import sqlite3
-from flask import Flask, request, jsonify #added to top of file
-from flask_cors import CORS #added to top of file
+from flask import Flask, request, jsonify 
+from flask_cors import CORS
+import os
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'database/database.db')
 
 def connect_to_db():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(filename)
     return conn
 
 def create_db_table():
@@ -54,6 +57,12 @@ def get_patients():
         for i in rows:
             patient = {}
             patient["PatientID"] = i["PatientID"]
+            patient["Gender"] = i["Gender"]
+            patient["FullName"] = i["FullName"]
+            patient["DOB"] = i["DOB"]
+            patient["PhoneNumber"] = i["PhoneNumber"]
+            patient["HomeAddress"] = i["HomeAddress"]
+            patient["BillId"] = i["BillID"]
             patients.append(patient)
 
     except:
@@ -62,14 +71,14 @@ def get_patients():
     return patients
 
 
-def get_patient_by_id(PatientID):
+def get_patient_by_id(Patient):
     patient = {}
     try:
         conn = connect_to_db()
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
         cur.execute("SELECT * FROM PATIENT WHERE PatientID = ?", 
-                       (PatientID,))
+                       (Patient["PatientID"],))
         row = cur.fetchone()
 
         # convert row object to dictionary
@@ -123,9 +132,10 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def api_get_patients():
     return jsonify(get_patients())
 
-@app.route('/api/patients/<PatientID>', methods=['GET'])
-def api_get_patient(PatientID):
-    return jsonify(get_patient_by_id(PatientID))
+@app.route('/api/patients/search', methods=['GET'])
+def api_get_patient():
+    patient = request.get_json()
+    return jsonify(get_patient_by_id(patient))
 
 @app.route('/api/patients/add',  methods = ['POST'])
 def api_add_patient():
