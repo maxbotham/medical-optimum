@@ -8,6 +8,8 @@ CREATE TABLE PATIENT(
     PhoneNumber varchar(20) NOT NULL,
     HomeAddress varchar(70) NOT NULL, /*Address is a keyword*/
     BillID varchar(10) NOT NULL,
+    PayerID varchar(10) NOT NULL,
+    FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID),
     FOREIGN KEY (BillID) REFERENCES BILL(BillID)
 );
 CREATE TABLE IN_PATIENT(
