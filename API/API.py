@@ -62,7 +62,7 @@ def get_patients():
             patient["DOB"] = i["DOB"]
             patient["PhoneNumber"] = i["PhoneNumber"]
             patient["HomeAddress"] = i["HomeAddress"]
-            patient["BillId"] = i["BillID"]
+            patient["BillID"] = i["BillID"]
             patients.append(patient)
 
     except:
@@ -87,15 +87,14 @@ def get_patient_by_id(Patient):
         patient = {}
 
     return patient
-"""def update_patient(patient):
+def update_patient(patient):
     updated_patient = {}
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("UPDATE patients SET name = ?, email = ?, phone = 
-                     ?, address = ?, country = ? WHERE PatientID =?",  
-                     (patient["name"], patient["email"], patient["phone"], 
-                     patient["address"], patient["country"], 
+        cur.execute("UPDATE PATIENT SET Gender = ?, FullName = ?, DOB = ?, PhoneNumber = ?, HomeAddress = ?, BillID = ? WHERE PatientID = ?",  
+                     (patient["Gender"], patient["FullName"], patient["DOB"], 
+                     patient["PhoneNumber"], patient["HomeAddress"], patient["BillID"], 
                      patient["PatientID"],))
         conn.commit()
         #return the patient
@@ -106,9 +105,9 @@ def get_patient_by_id(Patient):
         updated_patient = {}
     finally:
         conn.close()
-
+    
     return updated_patient
-"""
+
 def delete_patient(PatientID):
     message = {}
     try:
