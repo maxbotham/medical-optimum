@@ -3,152 +3,114 @@ import sqlite3
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
 import os
-dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, 'database/database.db')
-
-def connect_to_db():
-    conn = sqlite3.connect(filename)
-    return conn
-
-def create_db_table():
-    try:
-        conn = connect_to_db()
-        conn.execute('''
-            CREATE TABLE PATIENT (
-                PatientID INTEGER PRIMARY KEY NOT NULL,
-                
-            );
-        ''')
-
-        conn.commit()
-        print("patient table created successfully")
-    except:
-        print("patient table creation failed - Maybe table")
-    finally:
-        conn.close()
-
-
-def insert_patient(patient):
-    inserted_patient = {"PatientID":"bleh"}
-    try:
-        conn = connect_to_db()
-        cur = conn.cursor()
-        cur.execute("Insert into PATIENT (PatientID) values (?)",(patient["PatientID"],))
-        conn.commit()
-        inserted_patient = get_patient_by_id(cur.lastrowid)
-    except:
-        conn.rollback()
-
-    finally:
-        conn.close()
-
-        return inserted_patient
-
-def get_patients():
-    patients = []
-    try:
-        conn = connect_to_db()
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM PATIENT")
-        rows = cur.fetchall()
-
-        # convert row objects to dictionary
-        for i in rows:
-            patient = {}
-            patient["PatientID"] = i["PatientID"]
-            patient["Gender"] = i["Gender"]
-            patient["FullName"] = i["FullName"]
-            patient["DOB"] = i["DOB"]
-            patient["PhoneNumber"] = i["PhoneNumber"]
-            patient["HomeAddress"] = i["HomeAddress"]
-            patient["BillID"] = i["BillID"]
-            patients.append(patient)
-
-    except:
-        patients = []
-
-    return patients
-
-
-def get_patient_by_id(Patient):
-    patient = {}
-    try:
-        conn = connect_to_db()
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM PATIENT WHERE PatientID = ?", 
-                       (Patient["PatientID"],))
-        row = cur.fetchone()
-
-        # convert row object to dictionary
-        patient["PatientID"] = row["PatientID"]
-    except:
-        patient = {}
-
-    return patient
-def update_patient(patient):
-    updated_patient = {}
-    try:
-        conn = connect_to_db()
-        cur = conn.cursor()
-        cur.execute("UPDATE PATIENT SET Gender = ?, FullName = ?, DOB = ?, PhoneNumber = ?, HomeAddress = ?, BillID = ? WHERE PatientID = ?",  
-                     (patient["Gender"], patient["FullName"], patient["DOB"], 
-                     patient["PhoneNumber"], patient["HomeAddress"], patient["BillID"], 
-                     patient["PatientID"],))
-        conn.commit()
-        #return the patient
-        updated_patient = get_patient_by_id(patient["PatientID"])
-
-    except:
-        conn.rollback()
-        updated_patient = {}
-    finally:
-        conn.close()
-    
-    return updated_patient
-
-def delete_patient(PatientID):
-    message = {}
-    try:
-        conn = connect_to_db()
-        conn.execute("DELETE from PATIENT WHERE PatientID = ?",     
-                      (PatientID,))
-        conn.commit()
-        message["status"] = "patient deleted successfully"
-    except:
-        conn.rollback()
-        message["status"] = "Cannot delete patient"
-    finally:
-        conn.close()
-
-    return message
+from inventory import *
+from ward import *
+from doctor import *
+from receptionist import *
+from admin import *
+from department import *
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-@app.route('/api/patients', methods=['GET'])
-def api_get_patients():
-    return jsonify(get_patients())
+#Equipment routes
+@app.route('/admin/hospital/equipment',  methods = ['GET'])
+def admin_search_equipment():
+    equipment = request.get_json()
+    return jsonify(search_equipment(equipment))
 
-@app.route('/api/patients/search', methods=['GET'])
-def api_get_patient():
-    patient = request.get_json()
-    return jsonify(get_patient_by_id(patient))
+@app.route('/admin/hospital/equipment',  methods = ['POST'])
+def admin_add_equipment():
+    equipment = request.get_json()
+    return jsonify(add_equipment(equipment))
 
-@app.route('/api/patients/add',  methods = ['POST'])
-def api_add_patient():
-    patient = request.get_json()
-    return jsonify(insert_patient(patient))
+@app.route('/admin/hospital/equipment',  methods = ['PUT'])
+def adming_update_equipment():
+    equipment = request.get_json()
+    return jsonify(update_equipment(equipment))
 
-@app.route('/api/patients/update',  methods = ['PUT'])
-def api_update_patient():
-    patient = request.get_json()
-    return jsonify(update_patient(patient))
+#Medicine routes
+@app.route('/admin/hospital/medicine',  methods = ['GET'])
+def admin_search_medicine():
+    medicine = request.get_json()
+    return jsonify(search_medicine(medicine))
 
-@app.route('/api/patients/delete/<PatientID>',  methods = ['DELETE'])
-def api_delete_patient(PatientID):
-    return jsonify(delete_patient(PatientID))
+@app.route('/admin/hospital/medicine',  methods = ['POST'])
+def admin_add_medicine():
+    medicine = request.get_json()
+    return jsonify(add_medicine(medicine))
+
+@app.route('/admin/hospital/medicine',  methods = ['PUT'])
+def admin_update_medicine():
+    medicine = request.get_json()
+    return jsonify(update_medicine(medicine))
+
+#Ward and bed routes
+@app.route('/admin/hospital/ward',  methods = ['GET'])
+def admin_search_wards():
+    ward = request.get_json()
+    return jsonify(search_ward(ward))
+
+@app.route('/admin/hospital/bed',  methods = ['PUT'])
+def admin_update_bed():
+    bed = request.get_json()
+    return jsonify(update_bed(bed))
+
+#Employee routes
+#Doctor
+@app.route('/admin/hospital/employee/doctor',  methods = ['GET'])
+def admin_search_doctors():
+    doctor = request.get_json()
+    return jsonify(search_doctor(doctor))
+
+@app.route('/admin/hospital/employee/doctor',  methods = ['PUT'])
+def admin_update_doctor():
+    doctor = request.get_json()
+    return jsonify(update_doctor(doctor))
+
+@app.route('/admin/hospital/employee/doctor',  methods = ['POST'])
+def admin_add_doctor():
+    doctor = request.get_json()
+    return jsonify(add_doctor(doctor))
+
+#Receptionist
+@app.route('/admin/hospital/employee/receptionist',  methods = ['GET'])
+def admin_search_recep():
+    receptionist = request.get_json()
+    return jsonify(search_receptionist(receptionist))
+
+@app.route('/admin/hospital/employee/receptionist',  methods = ['PUT'])
+def admin_update_recep():
+    receptionist = request.get_json()
+    return jsonify(update_receptionist(receptionist))
+
+@app.route('/admin/hospital/employee/receptionist',  methods = ['POST'])
+def admin_add_recep():
+    receptionist = request.get_json()
+    return jsonify(add_receptionist(receptionist))
+
+#Admin
+@app.route('/admin/hospital/employee/admin',  methods = ['GET'])
+def admin_search_admin():
+    admin = request.get_json()
+    return jsonify(search_admin(admin))
+
+@app.route('/admin/hospital/employee/admin',  methods = ['PUT'])
+def admin_update_admin():
+    admin = request.get_json()
+    return jsonify(update_admin(admin))
+
+@app.route('/admin/hospital/employee/admin',  methods = ['POST'])
+def admin_add_admin():
+    admin = request.get_json()
+    return jsonify(add_admin(admin))
+
+#Department
+@app.route('/admin/hospital/department',  methods = ['GET'])
+def admin_search_department():
+    department = request.get_json()
+    return jsonify(search_department(department))
+
 
 if __name__ == "__main__":
     #app.debug = True
