@@ -45,8 +45,6 @@ CREATE TABLE EMERGENCY_CONTACT(
 );
 CREATE TABLE BED(
     BedNumber varchar(10) NOT NULL PRIMARY KEY,
-    BedStatus varchar(15) NOT NULL, /*Status is a keyword*/
-    /* Values can be: Occupied or Empty */
     Price float NOT NULL,
     PatientID varchar(10),
     WardNumber varchar(10) NOT NULL,
@@ -90,8 +88,7 @@ CREATE TABLE CONSULTATION(
 );
 CREATE TABLE DEPARTMENT(
     DeptID varchar(10) NOT NULL PRIMARY KEY,
-    DeptName varchar(20) NOT NULL, /*Name is a keyword*/
-    NoEmployees int NOT NULL
+    DeptName varchar(20) NOT NULL /*Name is a keyword*/
 );
 CREATE TABLE EMPLOYEE(
     EmployeeID varchar(10) NOT NULL PRIMARY KEY,
@@ -207,7 +204,7 @@ INSERT INTO IN_PATIENT VALUES
     ("P4", "Admitted", null, "B5"),
     ("P8", "Discharged", "2021-11-23", "B6"),
     ("P5", "Deceased", "2021-11-15", "B6"),
-    ("P8", "Discharged", "2021-09-20","B5")
+    ("P8", "Discharged", "2021-09-20","B9")
 ;
 INSERT INTO OUT_PATIENT VALUES
     ("P8"),
@@ -230,23 +227,23 @@ INSERT INTO EMERGENCY_CONTACT VALUES
     ("C9", "Laura Wachos", "laurawachos@gmail.com", "733-533-8302", "8643 University Ave NW", "P9", "Mother")
 ;
 INSERT INTO BED VALUES
-    ("B0", "Empty", 12.99, null, "W0"),
-    ("B1", "Empty", 12.99, null, "W0"),
-    ("B2", "Occupied", 11.99, null, "W0"),
-    ("B3", "Empty", 13.99, null, "W0"),
-    ("B4", "Empty", 26.99, null, "W0"),
-    ("B5", "Occupied", 15.99, null, "W1"),
-    ("B6", "Occupied", 20.99, null, "W1"),
-    ("B7", "Empty", 5.99, null, "W1"),
-    ("B8", "Empty", 5.99, null, "W1"),
-    ("B9", "Empty", 5.99, null, "W2"),
-    ("B10", "Empty", 5.99, null, "W2"),
-    ("B11", "Empty", 20.99, null, "W2"),
-    ("B12", "Empty", 20.99, null, "W2"),
-    ("B13", "Empty", 23.99, null, "W3"),
-    ("B14", "Empty", 23.99, null, "W3"),
-    ("B15", "Empty", 26.99, null, "W3"),
-    ("B16", "Empty", 5.99, null, "W3")
+    ("B0", 12.99, null, "W0"),
+    ("B1", 12.99, null, "W0"),
+    ("B2", 11.99, "P3", "W0"),
+    ("B3", 13.99, null, "W0"),
+    ("B4", 26.99, null, "W0"),
+    ("B5", 15.99, "P4", "W1"),
+    ("B6", 20.99, "P0", "W1"),
+    ("B7", 5.99, null, "W1"),
+    ("B8", 5.99, null, "W1"),
+    ("B9", 5.99, null, "W2"),
+    ("B10", 5.99, null, "W2"),
+    ("B11", 20.99, null, "W2"),
+    ("B12", 20.99, null, "W2"),
+    ("B13", 23.99, null, "W3"),
+    ("B14", 23.99, null, "W3"),
+    ("B15", 26.99, null, "W3"),
+    ("B16", 5.99, null, "W3")
 ;
 INSERT INTO WARD VALUES
     ("W0", "Geriatrics"),
@@ -256,11 +253,11 @@ INSERT INTO WARD VALUES
     ("W4", "Cathlab")
 ;
 INSERT INTO DEPARTMENT VALUES
-    ("D0", "Geriatrics", 2),
-    ("D1", "ICU", 2),
-    ("D2", "Maternity", 2),
-    ("D3", "Pediatrics", 2),
-    ("D4", "Cathlab", 2)
+    ("D0", "Geriatrics"),
+    ("D1", "ICU"),
+    ("D2", "Maternity"),
+    ("D3", "Pediatrics"),
+    ("D4", "Cathlab")
 ;
 INSERT INTO EMPLOYEE VALUES
     ("E0", "Dwight Docman", "1988-04-05", 68000, "2019-05-05"),
