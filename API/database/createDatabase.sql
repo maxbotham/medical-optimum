@@ -133,6 +133,14 @@ CREATE TABLE PAYER(
     PayerID varchar(10) NOT NULL PRIMARY KEY,
     FullName varchar(50) NOT NULL /*Name is a keyword*/
 );
+
+CREATE TABLE PATIENT_INSURANCE(
+    PayerID varchar(10) NOT NULL,
+    PatientID varchar(10) NOT NULL,
+    FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+);
+
 CREATE TABLE DIRECT(
     PayerID varchar(10) NOT NULL PRIMARY KEY,
     PatientID varchar(10) NOT NULL,
@@ -427,3 +435,7 @@ INSERT INTO INSURANCE VALUES
     ("P4", "830-004-0000", "dawinsurance@gmail.com"),
     ("P5", "018-858-1048", "calgaryinsurance@gmail.com")
 ;
+INSERT INTO PATIENT_INSURANCE VALUES
+    ("P0","P5"),
+    ("P1","P6"),
+    ("P2","P7");
