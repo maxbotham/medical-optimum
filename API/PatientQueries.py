@@ -603,9 +603,9 @@ def search_procedure(pres):
         cur = conn.cursor()
         if("DoctorName" in pres and "EquipmentName" in pres):
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? AND DoctorEmployeeID = ? AND EquipmentID = ?",(pres["PatientID"],getDoctorID(pres["DoctorName"]), getEquipID(pres["EquipmentName"]),))
-        elif("DoctorName" in pres and "MedicineName" not in pres):
+        elif("DoctorName" in pres and "EquipmentName" not in pres):
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? AND DoctorEmployeeID = ?",(pres["PatientID"],getDoctorID(pres["DoctorName"]), ))
-        elif("DoctorName" not in pres and "MedicineName" in pres):
+        elif("DoctorName" not in pres and "EquipmentName" in pres):
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? AND EquipmentID = ?",(pres["PatientID"],getEquipID(pres["EquipmentName"]), ))
         else:
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? ",(pres["PatientID"],))

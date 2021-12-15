@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
-import RangePicker from "react-range-picker";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -10,7 +9,6 @@ import "./styles/inventoryPage.css";
 
 const InventoryPage = ({ patient }) => {
   const [type, setType] = useState(null);
-  const [didSearch, setDidSearch] = useState(false);
   const [searchInput, setSearchInput] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -75,7 +73,7 @@ const InventoryPage = ({ patient }) => {
             <></>
           ) : selected === null ? (
             <SearchResults
-              {...{ searchResults, setSelected, setSearchResults }}
+              {...{ type, searchResults, setSelected, setSearchResults }}
             />
           ) : (
             <Selected {...{ setSelected, selected, type }} />
@@ -92,7 +90,6 @@ const InventoryPage = ({ patient }) => {
 };
 
 const AddInventory = ({ type }) => {
-  const [department, setDepartment] = useState(null);
   const [name, setName] = useState(null);
   const [quantity, setQuantity] = useState(null);
   const [price, setPrice] = useState(null);
@@ -106,9 +103,32 @@ const AddInventory = ({ type }) => {
     setPrice(props.target.value);
   };
   const add = () => {
-    //add this medicine/equipment to api
+    let bodyParams = {};
+    if (type === "Equipment") {
+      bodyParams = {
+        Quantity: quantity,
+        Price: price,
+        EquipmentName: name,
+      };
+    } else {
+      bodyParams = {
+        Quantity: quantity,
+        Price: price,
+        MedicineName: name,
+      };
+    }
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyParams),
+    };
+    fetch(
+      `http://127.0.0.1:5000/admin/hospital/${type.toLowerCase()}`,
+      requestOptions
+    ).then((response) => response.json());
   };
-  const defaultValue = null;
   return (
     <>
       <div className="add-values-title">{type} Information</div>
@@ -135,11 +155,6 @@ const AddInventory = ({ type }) => {
           onChange={changePrice}
         />
       </div>
-      {type === "Equipment" ? (
-        <SearchDepartment {...{ setDepartment, defaultValue }} />
-      ) : (
-        <></>
-      )}
       <div className=""></div>
       <Button
         variant="contained"
@@ -150,8 +165,7 @@ const AddInventory = ({ type }) => {
           name === "" ||
           name === null ||
           price === null ||
-          quantity === null ||
-          (department === null && type === "Equipment")
+          quantity === null
         }
         className="sign-out-button search-service-save-service"
       >
@@ -173,8 +187,23 @@ const InputForm = ({ type, setSearchInput, searchInput, setSearchResults }) => {
     }
   };
   const submitForm = () => {
-    //connect to API here
-    setSearchResults(["Test", "test", "test", "test2", "test5"]);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${searchInput?.name ?? "null"};${
+          searchInput?.id ?? "null"
+        }`,
+      },
+    };
+    fetch(
+      `http://127.0.0.1:5000/admin/hospital/${type.toLowerCase()}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   return (
     <div>
@@ -211,14 +240,19 @@ const InputForm = ({ type, setSearchInput, searchInput, setSearchResults }) => {
   );
 };
 
-const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
+const SearchResults = ({
+  type,
+  searchResults,
+  setSelected,
+  setSearchResults,
+}) => {
   let medicineList = searchResults.map((item, index) => {
     const setSelectedFunc = () => {
       setSelected(item);
     };
     return (
       <div onClick={setSelectedFunc} className="doctor-result-item">
-        {item}
+        {type === "Medicine" ? item.MedicineName : item.EquipmentName}
       </div>
     );
   });
@@ -244,17 +278,46 @@ const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
 };
 
 const Selected = ({ setSelected, selected, type }) => {
-  const [name, setName] = useState("Temp");
+  let initialName = "";
+  type === "Equipment"
+    ? (initialName = selected.EquipmentName)
+    : (initialName = selected.MedicineName);
+
+  const [name, setName] = useState(initialName);
   //useState(selected.name);
-  const [quantity, setQuantity] = useState("3");
-  const [price, setPrice] = useState("39.99");
-  const [department, setDepartment] = useState("Temporary");
-  const defaultValue = selected;
+  const [quantity, setQuantity] = useState(selected.Quantity);
+  const [price, setPrice] = useState(selected.Price);
   const unselect = () => {
     setSelected(null);
   };
   const save = () => {
-    //connect to API and save state
+    let paramsBody = {};
+    if (type === "Equipment") {
+      paramsBody = {
+        Quantity: quantity,
+        Price: price,
+        EquipmentName: name,
+        EquipmentID: selected.EquipmentID,
+      };
+    } else {
+      paramsBody = {
+        Quantity: quantity,
+        Price: price,
+        MedicineName: name,
+        MedicineID: selected.MedicineID,
+      };
+    }
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(paramsBody),
+    };
+    fetch(
+      `http://127.0.0.1:5000/admin/hospital/${type.toLowerCase()}`,
+      requestOptions
+    ).then((response) => response.json());
   };
 
   const changePrice = (props) => {
@@ -270,7 +333,10 @@ const Selected = ({ setSelected, selected, type }) => {
   const [] = useState(false);
   return (
     <div className="selected-doctor-wrapper">
-      <div className="selected-service-desc">You have selected: {selected}</div>
+      <div className="selected-service-desc">
+        You have selected:{" "}
+        {type === "Equipment" ? selected.EquipmentName : selected.MedicineName}
+      </div>
       <Button
         variant="contained"
         onClick={unselect}
@@ -304,11 +370,6 @@ const Selected = ({ setSelected, selected, type }) => {
           onChange={changePrice}
         />
       </div>
-      {type === "Equipment" ? (
-        <SearchDepartment {...{ setDepartment, defaultValue }} />
-      ) : (
-        <></>
-      )}
       <div className=""></div>
       <Button
         variant="contained"
@@ -319,8 +380,7 @@ const Selected = ({ setSelected, selected, type }) => {
           name === "" ||
           name === null ||
           price === null ||
-          quantity === null ||
-          (department === null && type === "Equipment")
+          quantity === null
         }
         className="sign-out-button search-service-save-service"
       >

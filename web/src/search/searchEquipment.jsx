@@ -17,6 +17,16 @@ const SearchEquipment = ({ setSelectedEquipment }) => {
     setEquipmentID(props.target.value);
   };
   const submitForm = () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${name};${equipmentID}`,
+      },
+    };
+    fetch("http://127.0.0.1:5000/admin/hospital/equipment", requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
     setDidSearch(true);
     setSearchResults(["Temporary", "Temp", "StillTemp", "Temp..."]);
   };
