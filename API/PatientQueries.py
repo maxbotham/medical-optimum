@@ -1,6 +1,12 @@
 import sqlite3
-from API import connect_to_db
+import os
 
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'database/database.db')
+
+def connect_to_db():
+    conn = sqlite3.connect(filename)
+    return conn
 
 def create_outpatient(patientID):
     try:

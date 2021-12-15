@@ -2,14 +2,7 @@
 import sqlite3
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
-import os
-
-dirname = os.path.dirname(__file__)
-filename = os.path.join(dirname, 'database/database.db')
-
-def connect_to_db():
-    conn = sqlite3.connect(filename)
-    return conn
+from PatientQueries import *
 from inventory import *
 from doctor import *
 from receptionist import *
