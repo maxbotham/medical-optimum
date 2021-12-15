@@ -8,8 +8,6 @@ CREATE TABLE PATIENT(
     PhoneNumber varchar(20) NOT NULL,
     HomeAddress varchar(70) NOT NULL, /*Address is a keyword*/
     BillID varchar(10) NOT NULL,
-    PayerID varchar(10) NOT NULL,
-    FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID),
     FOREIGN KEY (BillID) REFERENCES BILL(BillID)
 );
 CREATE TABLE IN_PATIENT(
@@ -133,14 +131,6 @@ CREATE TABLE PAYER(
     PayerID varchar(10) NOT NULL PRIMARY KEY,
     FullName varchar(50) NOT NULL /*Name is a keyword*/
 );
-
-CREATE TABLE PATIENT_INSURANCE(
-    PayerID varchar(10) NOT NULL,
-    PatientID varchar(10) NOT NULL,
-    FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID),
-    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
-);
-
 CREATE TABLE DIRECT(
     PayerID varchar(10) NOT NULL PRIMARY KEY,
     PatientID varchar(10) NOT NULL,
@@ -194,6 +184,18 @@ CREATE TABLE PAYER_PAYS_BILL(
     FOREIGN KEY (BillID) REFERENCES BILL(BillID),
     PRIMARY KEY (PayerID, BillID, DatePaid)
 );
+CREATE TABLE PATIENT_INSURANCE(
+    PayerID varchar(10) NOT NULL PRIMARY KEY,
+    PatientID varchar(10) NOT NULL,
+    FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+);
+INSERT INTO PATIENT_INSURANCE VALUES
+    ("P0","P5"),
+    ("P1","P6"),
+    ("P2","P7")
+;
+
 INSERT INTO PATIENT VALUES 
     ("P0", "Male", "Mac Dressman", "2001-02-03", "350-319-2629", "1812 32 Ave NW", "B0"),
     ("P1", "Female", "Shannon Milton", "2000-02-20", "885-392-0392", "6888 24 Ave NE", "B1"),
@@ -435,7 +437,3 @@ INSERT INTO INSURANCE VALUES
     ("P4", "830-004-0000", "dawinsurance@gmail.com"),
     ("P5", "018-858-1048", "calgaryinsurance@gmail.com")
 ;
-INSERT INTO PATIENT_INSURANCE VALUES
-    ("P0","P5"),
-    ("P1","P6"),
-    ("P2","P7");
