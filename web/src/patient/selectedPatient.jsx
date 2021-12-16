@@ -12,12 +12,27 @@ const SelectedPatient = ({
   searchResults,
   selectedPatient,
 }) => {
+  let patient = searchResults[selectedPatient];
+  const [emergContact, setEmergContact] = useState(null);
+  if (emergContact === null) {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": patient.PatientID,
+      },
+    };
+    fetch(`${baseURL}/admin/patients/emergencycontact`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        patient.emergContact = data[0];
+      });
+  }
   const [isAddService, setIsAddService] = useState(false);
   const [isSearchService, setIsSearchService] = useState(false);
   const [isEditPatient, setIsEditPatient] = useState(false);
   const [isViewBill, setIsViewBill] = useState(false);
   const [isAdmitPatient, setIsAdmitPatient] = useState(false);
-  let patient = searchResults[selectedPatient];
 
   const setAddService = () => {
     setIsSearchService(false);

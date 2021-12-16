@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import "./styles/searchDoctor.css";
+import baseURL from "../BaseURL";
 const SearchDoctor = ({ setSelectedDoctor }) => {
   const [name, setName] = useState(null);
   const [employeeID, setEmployeeID] = useState(null);
-  const [birthDay, setBirthDay] = useState(null);
-  const [birthMonth, setBirthMonth] = useState(null);
-  const [birthYear, setBirthYear] = useState(null);
-  const [department, setDepartment] = useState(null);
   const [didSearch, setDidSearch] = useState(false);
   const [selected, setSelected] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -21,26 +18,23 @@ const SearchDoctor = ({ setSelectedDoctor }) => {
   const changeEmployeeID = (props) => {
     setEmployeeID(props.target.value);
   };
-  const changeBirthDay = (props) => {
-    setBirthDay(props.target.value);
-  };
-  const changeBirthMonth = (props) => {
-    setBirthMonth(props.target.value);
-  };
-  const changeBirthYear = (props) => {
-    setBirthYear(props.target.value);
-  };
-  const changeDepartment = (props) => {
-    setDepartment(props.target.value);
-  };
   const submitForm = () => {
-    setSearchResults([
-      "This is a search result.",
-      "This is another search result.",
-      "I am getting tired of typing examples",
-      "I am done now.",
-    ]);
     setDidSearch(true);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${
+          employeeID === null || employeeID === "" ? "null" : employeeID
+        };${name === null || name === "" ? "null" : name};null`,
+      },
+    };
+    fetch(`${baseURL}/admin/hospital/employee/doctor`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setSearchResults(data);
+      });
   };
 
   return (
@@ -62,38 +56,6 @@ const SearchDoctor = ({ setSelectedDoctor }) => {
             label="Employee ID"
             variant="outlined"
             onChange={changeEmployeeID}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="outlined-basic"
-            label="Day of Birth"
-            variant="outlined"
-            onChange={changeBirthDay}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="outlined-basic"
-            label="Month of Birth"
-            variant="outlined"
-            onChange={changeBirthMonth}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="outlined-basic"
-            label="Year of Birth"
-            variant="outlined"
-            onChange={changeBirthYear}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="outlined-basic"
-            label="Department"
-            variant="outlined"
-            onChange={changeDepartment}
           />
         </div>
       </div>
@@ -126,7 +88,7 @@ const DoctorResults = ({ searchResults, setSelected, setDidSearch }) => {
     };
     return (
       <div onClick={setSelectedFunc} className="doctor-result-item">
-        {item}
+        {item.DoctorName}
       </div>
     );
   });
@@ -157,7 +119,9 @@ const SelectedDoctor = ({ setSelected, selected }) => {
   };
   return (
     <div className="selected-doctor-wrapper">
-      <div className="selected-doctor-title">You have selected: {selected}</div>
+      <div className="selected-doctor-title">
+        You have selected: {selected.DoctorName}
+      </div>
       <Button
         variant="contained"
         onClick={unselect}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import "./styles/searchMedicine.css";
+import baseURL from "../BaseURL";
 const SearchMedicine = ({ setSelectedMedicine }) => {
   const [name, setName] = useState(null);
   const [medicineID, setMedicineID] = useState(null);
@@ -18,7 +19,20 @@ const SearchMedicine = ({ setSelectedMedicine }) => {
   };
   const submitForm = () => {
     setDidSearch(true);
-    setSearchResults(["Temporary", "Temp", "StillTemp", "Temp..."]);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${name === null || name === "" ? "null" : name};${
+          medicineID === null || medicineID === "" ? "null" : medicineID
+        }`,
+      },
+    };
+    fetch(`${baseURL}/admin/hospital/medicine`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   return (
     <div>
@@ -70,7 +84,7 @@ const MedicineResults = ({ searchResults, setSelected, setDidSearch }) => {
     };
     return (
       <div onClick={setSelectedFunc} className="medicine-result-item">
-        {item}
+        {item.MedicineName}
       </div>
     );
   });
@@ -108,8 +122,11 @@ const SelectedMedicine = ({ setSelected, selected }) => {
       >
         Unselect
       </Button>
-      <div className="selected-medicine-title">
-        You have selected: {selected}
+      <div style={{ marginTop: ".5rem" }} className="selected-medicine-title">
+        You have selected: {selected.MedicineName}
+      </div>
+      <div style={{ marginTop: ".5rem" }} className="selected-medicine-title">
+        Amount available: {selected.Quantity}
       </div>
     </div>
   );

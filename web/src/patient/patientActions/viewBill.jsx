@@ -1,32 +1,49 @@
 import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
+import baseURL from "../../BaseURL";
 import "./styles/viewBill.css";
 const ViewBill = ({ patient }) => {
-  const tempBillItems = {
-    unpaidItems: [
-      { name: "Example Prescription", amount: 99.99 },
-      { name: "Example Prescription 2", amount: 80.99 },
-      { name: "Example Procedure 3", amount: 44.99 },
-      { name: "Example Procedure 4", amount: 39.99 },
-      { name: "Example Consultation 5", amount: 38.99 },
-    ],
-    paidItems: [
-      { name: "Example Prescription", amount: 99.99 },
-      { name: "Example Prescription", amount: 99.99 },
-      { name: "Example Prescription", amount: 99.99 },
-      { name: "Example Prescription", amount: 99.99 },
-    ],
-  };
-  let itemList = tempBillItems.unpaidItems.map((item, index) => {
-    return (
-      <div className="bill-item-wrapper">
-        <div className="bill-item">
-          Name: {item.name}, Amount Owed: {item.amount}
+  const [billItems, setBillItems] = useState(null);
+  if (billItems === null) {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${patient.PatientID}`,
+      },
+    };
+    fetch(`${baseURL}/admin/patients/viewbill`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setBillItems(data);
+      });
+  }
+  if (billItems !== null) {
+    const unpaidItems = billItems.filter((item) => {
+      return !item.Paid;
+    });
+    let itemList = unpaidItems.map((item, index) => {
+      return (
+        <div className="bill-item-wrapper">
+          <div className="bill-item">
+            Name: {item.Item}, Amount Owed: {item.Total}, Date: {item.BillDate}
+          </div>
         </div>
-      </div>
+      );
+    });
+    let totalOwed = 0;
+    for (let i = 0; i < unpaidItems.length; i++) {
+      totalOwed += unpaidItems[i].Total;
+    }
+    return (
+      <>
+        <div>{itemList}</div>
+        <div style={{ marginTop: ".6rem" }}>{"Total owed: " + totalOwed}</div>
+      </>
     );
-  });
-  return <div>{itemList}</div>;
+  } else {
+    return <></>;
+  }
 };
 
 export default ViewBill;

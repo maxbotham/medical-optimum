@@ -15,3 +15,16 @@
     margin-top: 1rem !important;
     margin-right: 1rem !important;
 }
+
+.selected-service-values{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.selected-service-value{
+    background-color: lightBlue;
+    padding: .6rem;
+    margin-top: 1rem;
+    border-radius: .5rem;
+    margin-right: 1rem;
+}

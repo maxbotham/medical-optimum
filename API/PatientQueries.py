@@ -46,7 +46,6 @@ def view_bill(patient):
             item["Total"] = i["Total"]
             item["BillDate"] = i["BillDate"]
             item["Paid"] = i["Paid"]
-
             bill.append(item)
 
     except:
@@ -802,9 +801,9 @@ def update_patient(patient):
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("UPDATE PATIENT SET Gender = ?, FullName = ?, DOB = ?, PhoneNumber = ?, HomeAddress = ?, BillID = ? WHERE PatientID = ?",
-                    (patient["Gender"], patient["FullName"], patient["DOB"],
-                     patient["PhoneNumber"], patient["HomeAddress"], patient["BillID"],
+        cur.execute("UPDATE PATIENT SET Gender = ?, FullName = ?, PhoneNumber = ?, HomeAddress = ?, WHERE PatientID = ?",
+                    (patient["Gender"], patient["FullName"],
+                     patient["PhoneNumber"], patient["HomeAddress"],
                      patient["PatientID"],))
         conn.commit()
         # return the patient
@@ -874,3 +873,30 @@ def add_visit(patient):
     remove_outpatient(patient["PatientID"])
 
     return
+
+
+def get_specific_emergency(patient):
+    ecs = []
+    try:
+        conn = connect_to_db()
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT * FROM EMERGENCY_CONTACT WHERE PatientID = ?", (patient["PatientID"],))
+        rows = cur.fetchall()
+
+        # convert row objects to dictionary
+        for i in rows:
+            newPat = {}
+            newPat["PatientID"] = i["PatientID"]
+            newPat["ContactID"] = i["ContactID"]
+            newPat["Relation"] = i["Relation"]
+            newPat["FullName"] = i["FullName"]
+            newPat["Email"] = i["Email"]
+            newPat["PhoneNumber"] = i["PhoneNumber"]
+            newPat["HomeAddress"] = i["HomeAddress"]
+            ecs.append(newPat)
+
+    except:
+        ecs = []
+    return ecs
