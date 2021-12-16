@@ -9,6 +9,32 @@ def connect_to_db():
     conn = sqlite3.connect(filename)
     return conn
 
+def login (username,password):
+    employeeType = "Unsuccessful"
+    conn = connect_to_db()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT EmployeeID FROM ADMIN_ WHERE DBAccessUsername = ? AND DBAccessPassword = ?", 
+                   (username,password,))
+    data=cur.fetchone()
+    if(data is not None):
+        employeeType = "Admin"
+        
+    
+    
+    conn = connect_to_db()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT EmployeeID FROM RECEPTIONIST WHERE DBAccessUsername = ? AND DBAccessPassword = ?", 
+                   (username,password,))
+    data=cur.fetchone()
+    if(data is not None):
+        employeeType = "Receptionist"
+            
+    
+
+    return employeeType
+    
 
 def create_outpatient(patientID):
     try:
