@@ -6,7 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import SearchDepartment from "../../../search/searchDepartment";
 import "./styles/inventoryPage.css";
-
+import baseURL from "../../../BaseURL";
 const InventoryPage = ({ patient }) => {
   const [type, setType] = useState(null);
   const [searchInput, setSearchInput] = useState(null);
@@ -125,7 +125,7 @@ const AddInventory = ({ type }) => {
       body: JSON.stringify(bodyParams),
     };
     fetch(
-      `http://127.0.0.1:5000/admin/hospital/${type.toLowerCase()}`,
+      `${baseURL}/admin/hospital/${type.toLowerCase()}`,
       requestOptions
     ).then((response) => response.json());
   };
@@ -191,15 +191,18 @@ const InputForm = ({ type, setSearchInput, searchInput, setSearchResults }) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Query-Params": `${searchInput?.name ?? "null"};${
-          searchInput?.id ?? "null"
+        "Query-Params": `${
+          searchInput?.name === "" || searchInput?.name === null
+            ? "null"
+            : searchInput?.name ?? "null"
+        };${
+          searchInput?.id === "" || searchInput?.id === null
+            ? "null"
+            : searchInput?.id ?? "null"
         }`,
       },
     };
-    fetch(
-      `http://127.0.0.1:5000/admin/hospital/${type.toLowerCase()}`,
-      requestOptions
-    )
+    fetch(`${baseURL}/admin/hospital/${type.toLowerCase()}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setSearchResults(data);
@@ -315,7 +318,7 @@ const Selected = ({ setSelected, selected, type }) => {
       body: JSON.stringify(paramsBody),
     };
     fetch(
-      `http://127.0.0.1:5000/admin/hospital/${type.toLowerCase()}`,
+      `${baseURL}/admin/hospital/${type.toLowerCase()}`,
       requestOptions
     ).then((response) => response.json());
   };
