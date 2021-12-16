@@ -10,6 +10,9 @@ from admin import *
 from department import *
 from ward import *
 
+def valid_input(input):    
+    return not any(not c.isalnum() for c in input)
+
 app = Flask(__name__)
 
 #Equipment routes
@@ -19,11 +22,13 @@ def admin_search_equipment():
     equipHeader = request.headers.get('Query-Params')
     equipArr = equipHeader.split(';')
     equipment = {}
-    if equipArr[0] != "null":
-        equipment["EquipmentName"] = equipArr[0]
-    if equipArr[1] != "null":
-        equipment["EquipmentID"] = equipArr[1]
-    return jsonify(search_equipment(equipment))
+    if(valid_input(equipArr[0]) and valid_input(equipArr[1])): 
+        if equipArr[0] != "null" :
+            equipment["EquipmentName"] = equipArr[0]
+        if equipArr[1] != "null":
+            equipment["EquipmentID"] = equipArr[1]
+        return jsonify(search_equipment(equipment))
+    return
 
 @app.route('/admin/hospital/equipment',  methods = ['POST'])
 def admin_add_equipment():
@@ -42,11 +47,13 @@ def admin_search_medicine():
     medicineHeader = request.headers.get('Query-Params')
     medicineArr = medicineHeader.split(';')
     medicine = {}
-    if medicineArr[0] != "null":
-        medicine["MedicineName"] = medicineArr[0]
-    if medicineArr[1] != "null":
-        medicine["MedicineID"] = medicineArr[1]    
-    return jsonify(search_medicine(medicine))
+    if(valid_input(medicineArr[0]) and valid_input(medicineArr[1])):
+        if medicineArr[0] != "null":
+            medicine["MedicineName"] = medicineArr[0]
+        if medicineArr[1] != "null":
+            medicine["MedicineID"] = medicineArr[1]    
+        return jsonify(search_medicine(medicine))
+    return
 
 @app.route('/admin/hospital/medicine',  methods = ['POST'])
 def admin_add_medicine():
@@ -65,11 +72,13 @@ def admin_search_wards():
     wardHeader = request.headers.get('Query-Params')
     wardArr = wardHeader.split(';')
     ward = {}
-    if wardArr[0] != "null":
-        ward["WardNumber"] = wardArr[0]
-    if wardArr[1] != "null":
-        ward["WardType"] = wardArr[1] 
-    return jsonify(search_ward(ward))
+    if(valid_input(wardArr[0]) and valid_input(wardArr[1])):
+        if wardArr[0] != "null":
+            ward["WardNumber"] = wardArr[0]
+        if wardArr[1] != "null":
+            ward["WardType"] = wardArr[1] 
+        return jsonify(search_ward(ward))
+    return
 
 @app.route('/admin/hospital/bed',  methods = ['PUT'])
 def admin_update_bed():
@@ -84,13 +93,15 @@ def admin_search_doctors():
     queryHeader = request.headers.get('Query-Params')
     docArr = queryHeader.split(';')
     doctor = {}
-    if docArr[0] != "null":
-        doctor["DoctorID"] = docArr[0]
-    if docArr[1] != "null":
-        doctor["DoctorName"] = docArr[1] 
-    if docArr[2] != "null":
-        doctor["Specialty"] = docArr[0]
-    return jsonify(search_doctor(doctor))
+    if(valid_input(docArr[0]) and valid_input(docArr[1]) and valid_input(docArr[2])):
+        if docArr[0] != "null":
+            doctor["DoctorID"] = docArr[0]
+        if docArr[1] != "null":
+            doctor["DoctorName"] = docArr[1] 
+        if docArr[2] != "null":
+            doctor["Specialty"] = docArr[0]
+        return jsonify(search_doctor(doctor))
+    return
 
 @app.route('/admin/hospital/employee/doctor',  methods = ['PUT'])
 def admin_update_doctor():
@@ -109,11 +120,13 @@ def admin_search_recep():
     queryHeader = request.headers.get('Query-Params')
     recepArr = queryHeader.split(';')
     receptionist = {}
-    if recepArr[0] != "null":
-        receptionist["RecepID"] = recepArr[0]
-    if recepArr[1] != "null":
-        receptionist["RecepName"] = recepArr[1] 
-    return jsonify(search_receptionist(receptionist))
+    if(valid_input(recepArr[0]) and valid_input(recepArr[1])):
+        if recepArr[0] != "null":
+            receptionist["RecepID"] = recepArr[0]
+        if recepArr[1] != "null":
+            receptionist["RecepName"] = recepArr[1] 
+        return jsonify(search_receptionist(receptionist))
+    return
 
 @app.route('/admin/hospital/employee/receptionist',  methods = ['PUT'])
 def admin_update_recep():
@@ -132,11 +145,13 @@ def admin_search_admin():
     queryHeader = request.headers.get('Query-Params')
     adminArr = queryHeader.split(';')
     admin = {}
-    if adminArr[0] != "null":
-        admin["AdminID"] = adminArr[0]
-    if adminArr[1] != "null":
-        admin["AdminName"] = adminArr[1]
-    return jsonify(search_admin(admin))
+    if(valid_input(adminArr[0]) and valid_input(adminArr[1])):
+        if adminArr[0] != "null":
+            admin["AdminID"] = adminArr[0]
+        if adminArr[1] != "null":
+            admin["AdminName"] = adminArr[1]
+        return jsonify(search_admin(admin))
+    return
 
 @app.route('/admin/hospital/employee/admin',  methods = ['PUT'])
 def admin_update_admin():
@@ -155,11 +170,13 @@ def admin_search_department():
     queryHeader = request.headers.get('Query-Params')
     deptArr = queryHeader.split(';')
     department = {}
-    if deptArr[0] != "null":
-        department["DeptID"] = deptArr[0]
-    if deptArr[1] != "null":
-        department["DeptName"] = deptArr[1]
-    return jsonify(search_department(department))
+    if(valid_input(deptArr[0]) and valid_input(deptArr[1])):
+        if deptArr[0] != "null":
+            department["DeptID"] = deptArr[0]
+        if deptArr[1] != "null":
+            department["DeptName"] = deptArr[1]
+        return jsonify(search_department(department))
+    return
 
 #Format for Query-Params is: FullName;PatientID;DOB
 @app.route('/admin/patients/search', methods=['GET'])
@@ -167,13 +184,14 @@ def api_get_patient():
     queryHeader = request.headers.get('Query-Params')
     patientArr = queryHeader.split(';')
     patient = {}
-    if patientArr[0] != "null":
-        patient["FullName"] = patientArr[0]
-    if patientArr[1] != "null":
-        patient["PatientID"] = patientArr[1]    
-    if patientArr[2] != "null":
-        patient["DOB"] = patientArr[2]   
-    return jsonify(search_patients(patient))
+    if(valid_input(patientArr[0]) and valid_input(patientArr[1]) and valid_input(patientArr[2])):
+        if patientArr[0] != "null":
+            patient["FullName"] = patientArr[0]
+        if patientArr[1] != "null":
+            patient["PatientID"] = patientArr[1]    
+        if patientArr[2] != "null":
+            patient["DOB"] = patientArr[2]   
+        return jsonify(search_patients(patient))
 
 @app.route('/admin/patients/register',  methods = ['POST'])
 def api_add_patient():
@@ -267,6 +285,14 @@ def api_get_consultation():
     if paramsArr[1] != "null":
         patient["PatientID"] = paramsArr[1]
     return jsonify(search_consultation(patient))
+
+@app.route('/login', methods=['GET'])
+def api_login():
+    queryHeader = request.headers.get('Query-Params')
+    print(queryHeader)
+    paramsArr = queryHeader.split(';')
+    
+    return jsonify(login(paramsArr[0],paramsArr[1]))
 
 if __name__ == "__main__":
     #app.debug = True

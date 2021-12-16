@@ -8,6 +8,33 @@ def connect_to_db():
     conn = sqlite3.connect(filename)
     return conn
 
+def login (username,password):
+    employeeType = "Unsuccessful"
+    conn = connect_to_db()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT EmployeeID FROM ADMIN_ WHERE DBAccessUsername = ? AND DBAccessPassword = ?", 
+                   (username,password,))
+    data=cur.fetchone()
+    if(data is not None):
+        employeeType = "Admin"
+        
+    
+    
+    conn = connect_to_db()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT EmployeeID FROM RECEPTIONIST WHERE DBAccessUsername = ? AND DBAccessPassword = ?", 
+                   (username,password,))
+    data=cur.fetchone()
+    if(data is not None):
+        employeeType = "Receptionist"
+            
+    
+
+    return employeeType
+    
+
 def create_outpatient(patientID):
     try:
         conn = connect_to_db()
@@ -603,9 +630,9 @@ def search_procedure(pres):
         cur = conn.cursor()
         if("DoctorName" in pres and "EquipmentName" in pres):
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? AND DoctorEmployeeID = ? AND EquipmentID = ?",(pres["PatientID"],getDoctorID(pres["DoctorName"]), getEquipID(pres["EquipmentName"]),))
-        elif("DoctorName" in pres and "EquipmentName" not in pres):
+        elif("DoctorName" in pres and "MedicineName" not in pres):
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? AND DoctorEmployeeID = ?",(pres["PatientID"],getDoctorID(pres["DoctorName"]), ))
-        elif("DoctorName" not in pres and "EquipmentName" in pres):
+        elif("DoctorName" not in pres and "MedicineName" in pres):
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? AND EquipmentID = ?",(pres["PatientID"],getEquipID(pres["EquipmentName"]), ))
         else:
             cur.execute("SELECT * FROM PROCEDURE_ WHERE PatientID = ? ",(pres["PatientID"],))
