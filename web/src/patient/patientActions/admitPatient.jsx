@@ -40,7 +40,6 @@ const InventoryPage = ({ patient }) => {
       });
   };
   const submitAdmitPatient = () => {
-    console.log(patient.PatientID);
     const requestOptions = {
       method: "POST",
       headers: {
@@ -49,6 +48,8 @@ const InventoryPage = ({ patient }) => {
       body: JSON.stringify({
         PatientID: patient.PatientID,
         BedNumber: bedSelected.bedNumber,
+        BedTotal: bedSelected.price,
+        BillDate: new Date().toISOString().split("T")[0],
       }),
     };
     fetch(`${baseURL}/admin/patients/admit`, requestOptions)

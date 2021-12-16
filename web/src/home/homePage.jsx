@@ -1,10 +1,10 @@
 import { TextField, Button } from "@mui/material";
 import React, { useState } from "react";
 import "./styles/homepage.css";
-import HospitalPage from '../hospital/hospitalPage.jsx';
-import PatientPage from '../patient/patientPage.jsx';
+import HospitalPage from "../hospital/hospitalPage.jsx";
+import PatientPage from "../patient/patientPage.jsx";
 
-const HomePage = ({ setIsValidated, user, setUser }) => {
+const HomePage = ({ setIsValidated, user, setUser, userType }) => {
   const [hospitalSelected, setHospitalSelected] = useState(false);
   const [patientSelected, setPatientSelected] = useState(false);
 
@@ -18,12 +18,19 @@ const HomePage = ({ setIsValidated, user, setUser }) => {
   const selectHospital = () => {
     setHospitalSelected(true);
   };
+  
   if (hospitalSelected) {
     return <HospitalPage {...{ setHospitalSelected }} />;
   }
 
   if (patientSelected) {
     return <PatientPage {...{ setPatientSelected }} />;
+  }
+  let patientStyle = {}
+  if(userType==="Receptionist"){
+    patientStyle = {
+      width: "100%",
+    }
   }
   return (
     <div className="home-page-wrapper">
@@ -40,12 +47,16 @@ const HomePage = ({ setIsValidated, user, setUser }) => {
         <div className="home-page-title">Medical Optimum</div>
       </div>
       <div className="home-page-content-wrapper">
-        <div className="home-page-select-patient" onClick={selectPatient}>
+        <div className="home-page-select-patient" style={patientStyle} onClick={selectPatient}>
           Patient
         </div>
-        <div className="home-page-select-hospital" onClick={selectHospital}>
-          Hospital
-        </div>
+        {userType === "Admin" ? (
+          <div className="home-page-select-hospital" onClick={selectHospital}>
+            Hospital
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

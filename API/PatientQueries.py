@@ -1,6 +1,6 @@
 import sqlite3
 import os
-
+import json
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'database/database.db')
 
@@ -79,6 +79,11 @@ def view_bill(patient):
 
     return bill
 
+def print_bill(patient):
+    bill = view_bill(patient)
+    with open('ItemizedBill.txt', 'w') as fout:
+        json.dump(bill, fout)
+    return
 
 def add_consultation(consultation):
     # added into bill items (not paid), assume equipment search returns existing quantity
@@ -538,8 +543,8 @@ def search_patients(patient):
             patient["HomeAddress"] = i["HomeAddress"]
             patient["BillID"] = i["BillID"]
             patient["Inpatient"] = check_inpatient(i["PatientID"])
+            patient["emergContact"] = get_specific_emergency(patient)
             patients.append(patient)
-
     except:
         patients = []
 
@@ -755,9 +760,9 @@ def admit(patient):
         cur.execute("Update BED SET PatientID = ? WHERE BedNumber = ?",
                     (patient["PatientID"], patient["BedNumber"],))
         conn.commit()
+        add_bill_items(getBillID(patient["PatientID"]), "Bed "+patient["BedNumber"], patient["BedTotal"], patient["BillDate"], False)
     except:
         conn.rollback()
-
     finally:
         conn.close()
     # remove patientID from outpatient

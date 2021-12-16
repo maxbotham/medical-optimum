@@ -4,7 +4,7 @@ import SearchFormResults from "./searchFormResults";
 import SelectedPatient from "./selectedPatient";
 import "./styles/searchForm.css";
 import baseURL from "../BaseURL";
-import DatePicker from 'react-datepicker';
+import DatePicker from "react-datepicker";
 const SearchForm = () => {
   const [name, setName] = useState(null);
   const [dob, setDOB] = useState(null);
@@ -46,7 +46,9 @@ const SearchForm = () => {
     };
     fetch(`${baseURL}/admin/patients/search`, requestOptions)
       .then((response) => response.json())
-      .then((data) => {setSearchResults(data)});
+      .then((data) => {
+        setSearchResults(data);
+      });
     setIsResults(true);
   };
   return (
@@ -72,10 +74,7 @@ const SearchForm = () => {
       </div>
       <div className="patient-register-input patient-date-pick">
         <div style={{ marginBottom: ".3rem" }}>Birthday</div>
-        <DatePicker
-          selected={dob}
-          onChange={(date) => setDOB(date)}
-        />
+        <DatePicker selected={dob} onChange={(date) => setDOB(date)} />
       </div>
       <div className="submit-search-form">
         <Button

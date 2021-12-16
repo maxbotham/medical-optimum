@@ -31,14 +31,36 @@ const ViewBill = ({ patient }) => {
         </div>
       );
     });
+
+    const printBill = () => {
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Query-Params": `${patient.PatientID}`,
+        },
+      };
+      fetch(`${baseURL}/admin/patients/printbill`, requestOptions).then(
+        (response) => response.json()
+      );
+    };
+
     let totalOwed = 0;
     for (let i = 0; i < unpaidItems.length; i++) {
       totalOwed += unpaidItems[i].Total;
     }
     return (
       <>
+        <Button
+          variant="contained"
+          onClick={printBill}
+          className="sign-out-button patient-action-button"
+          style={{ marginTop: ".3rem" }}
+        >
+          Print Bill
+        </Button>
         <div>{itemList}</div>
-        <div style={{ marginTop: ".6rem" }}>{"Total owed: " + totalOwed}</div>
+        <div style={{ marginTop: ".6rem" }}>{"Total owed: " + totalOwed.toFixed(2)}</div>
       </>
     );
   } else {

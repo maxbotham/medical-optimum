@@ -153,36 +153,11 @@ CREATE TABLE BILL_ITEMS(
     PRIMARY KEY (BillID, BillDate, Item),
     FOREIGN KEY (BillID) REFERENCES BILL(BillID)
 );
-CREATE TABLE REGISTERS(
-    ReceptionistEmployeeID varchar(10) NOT NULL,
-    PatientID varchar(10) NOT NULL,
-    RegisterDate DATE NOT NULL, /*Date is a keyword*/
-    PRIMARY KEY (ReceptionistEmployeeID, PatientID),
-    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
-    FOREIGN KEY (ReceptionistEmployeeID) REFERENCES RECEPTIONIST(EmployeeID)
-);
-CREATE TABLE ADMITS(
-    ReceptionistEmployeeID varchar(10) NOT NULL,
-    InPatientID varchar(10) NOT NULL,
-    AdmitDate DATE NOT NULL, /*Date is a keyword*/
-    PRIMARY KEY (ReceptionistEmployeeID, InPatientID, AdmitDate),
-    FOREIGN KEY (InPatientID) REFERENCES IN_PATIENT(PatientID),
-    FOREIGN KEY (ReceptionistEmployeeID) REFERENCES RECEPTIONIST(EmployeeID)
-);
 CREATE TABLE INSURANCE(
     PayerID varchar(10) NOT NULL PRIMARY KEY,
     Phone varchar(20) NOT NULL,
     Email varchar(40) NOT NULL,
     FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID)
-);
-CREATE TABLE PAYER_PAYS_BILL(
-    PayerID varchar(10) NOT NULL,
-    BillID varchar(10) NOT NULL,
-    AmountPaid float NOT NULL,
-    DatePaid DATE NOT NULL, /*Date is a keyword*/
-    FOREIGN KEY (PayerID) REFERENCES PAYER(PayerID),
-    FOREIGN KEY (BillID) REFERENCES BILL(BillID),
-    PRIMARY KEY (PayerID, BillID, DatePaid)
 );
 CREATE TABLE PATIENT_INSURANCE(
     PayerID varchar(10) NOT NULL,
@@ -212,7 +187,7 @@ INSERT INTO IN_PATIENT VALUES
     ("P0", "Admitted", null, "B6"),
     ("P3", "Admitted", null, "B2"),
     ("P4", "Admitted", null, "B5"),
-    ("P8", "Discharged", "2021-11-23", "B6"),
+    ("P9", "Discharged", "2021-11-23", "B6"),
     ("P5", "Deceased", "2021-11-15", "B6"),
     ("P8", "Discharged", "2021-09-20","B9")
 ;
@@ -225,16 +200,16 @@ INSERT INTO OUT_PATIENT VALUES
     ("P9")
 ;
 INSERT INTO EMERGENCY_CONTACT VALUES
-    ("C0", "George Matthewson", "georgematthewson@gmail.com", "1812 32 Ave NW", "305-488-2012", "P0", "Friend"),
+    ("C0", "George Matthewson", "georgematthewson@gmail.com", "1812 32 Ave NW",  "305-488-2012", "P0", "Friend"),
     ("C1", "Marcus Milton", "marcusmilton@gmail.com", "6808 24 Ave SE", "123-503-5888", "P1", "Father"),
-    ("C2", "Karen Wetham", "sharenwetham@gmail.com", "555-884-3844", "3022 38 Ave SE", "P2", "Mother"),
-    ("C3", "Paula Manwork", "paulamanwork@gmail.com", "885-233-5888", "1502 Uxbridge Drive NW", "P3", "Mother"),
-    ("C4", "Ruben Royale", "rubenroyale@gmail.com", "885-500-1838", "600 12 Ave NE", "P4", "Father"),
-    ("C5", "Carson Tate", "carsontate@gmail.com", "885-381-4858", "302 12 Ave NE", "P5", "Father"),
-    ("C6", "Savannah Polanski", "savannahpolan@gmail.com", "733-202-2022", "5988 32 Ave SW", "P6", "Mother"),
-    ("C7", "Emily Manson", "emilymanson@gmail.com", "885-684-6829", "6822 68 Ave SE", "P7", "Mother"),
-    ("C8", "Lucas Alhajj", "lucasalhajj@gmail.com", "885-100-6844", "9965 20 Ave SE", "P8", "Son"),
-    ("C9", "Laura Wachos", "laurawachos@gmail.com", "733-533-8302", "8643 University Ave NW", "P9", "Mother")
+    ("C2", "Karen Wetham", "sharenwetham@gmail.com", "3022 38 Ave SE", "555-884-3844", "P2", "Mother"),
+    ("C3", "Paula Manwork", "paulamanwork@gmail.com", "1502 Uxbridge Drive NW", "885-233-5888", "P3", "Mother"),
+    ("C4", "Ruben Royale", "rubenroyale@gmail.com", "600 12 Ave NE", "885-500-1838", "P4", "Father"),
+    ("C5", "Carson Tate", "carsontate@gmail.com", "302 12 Ave NE", "885-381-4858", "P5", "Father"),
+    ("C6", "Savannah Polanski", "savannahpolan@gmail.com", "5988 32 Ave SW", "733-202-2022", "P6", "Mother"),
+    ("C7", "Emily Manson", "emilymanson@gmail.com", "6822 68 Ave SE", "885-684-6829", "P7", "Mother"),
+    ("C8", "Lucas Alhajj", "lucasalhajj@gmail.com", "9965 20 Ave SE",  "885-100-6844", "P8", "Son"),
+    ("C9", "Laura Wachos", "laurawachos@gmail.com", "8643 University Ave NW", "733-533-8302", "P9", "Mother")
 ;
 INSERT INTO BED VALUES
     ("B0", 12.99, null, "W0"),
@@ -408,26 +383,6 @@ INSERT INTO BILL_ITEMS VALUES
     ("B8", "Bed", 120.89, "2021-09-20", false),
     ("B8", "Consultation", 100, "2021-09-17", false),
     ("B8", "Consultation", 140, "2021-11-20", false)
-;
-INSERT INTO REGISTERS VALUES
-    ("E3", "P0", "2020-10-05"),
-    ("E9", "P1", "2020-11-06"),
-    ("E3", "P2", "2020-11-09"),
-    ("E9", "P3", "2020-12-08"),
-    ("E13", "P4", "2021-03-06"),
-    ("E13", "P5", "2021-05-03"),
-    ("E13", "P6", "2021-06-03"),
-    ("E9", "P7", "2021-07-11"),
-    ("E3", "P8", "2021-08-12"),
-    ("E9", "P9", "2021-09-12")
-;
-INSERT INTO ADMITS VALUES
-    ("E13", "P0", "2021-11-25"),
-    ("E13", "P3", "2021-11-24"),
-    ("E9", "P4", "2021-11-28"),
-    ("E9", "P8", "2021-11-15"),
-    ("E3", "P5", "2021-11-01"),
-    ("E3", "P8", "2021-09-13")
 ;
 INSERT INTO INSURANCE VALUES
     ("P0", "778-319-2999", "lucidinsurance@gmail.com"),

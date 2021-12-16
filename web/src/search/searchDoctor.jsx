@@ -32,7 +32,6 @@ const SearchDoctor = ({ setSelectedDoctor }) => {
     fetch(`${baseURL}/admin/hospital/employee/doctor`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setSearchResults(data);
       });
   };

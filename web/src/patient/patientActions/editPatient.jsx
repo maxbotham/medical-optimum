@@ -8,16 +8,16 @@ const EditPatient = ({ patient }) => {
   const [name, setName] = useState(patient.FullName);
   const [phone, setPhone] = useState(patient.PhoneNumber);
   const [address, setAddress] = useState(patient.HomeAddress);
-  const [emergName, setEmergName] = useState(patient.emergContact.FullName);
+  const [emergName, setEmergName] = useState(patient.emergContact[0].FullName);
   const [emergAddress, setEmergAddress] = useState(
-    patient.emergContact.HomeAddress
+    patient.emergContact[0].HomeAddress
   );
   const [emergPhone, setEmergPhone] = useState(
-    patient.emergContact.PhoneNumber
+    patient.emergContact[0].PhoneNumber
   );
-  const [emergEmail, setEmergEmail] = useState(patient.emergContact.Email);
+  const [emergEmail, setEmergEmail] = useState(patient.emergContact[0].Email);
   const [emergRelation, setEmergRelation] = useState(
-    patient.emergContact.Relation
+    patient.emergContact[0].Relation
   );
   const [gender, setGender] = useState(patient.Gender);
 
@@ -99,13 +99,6 @@ const EditPatient = ({ patient }) => {
         PatientID: patient.PatientID,
       }),
     };
-    console.log({
-      Gender: gender,
-      FullName: name,
-      PhoneNumber: phone,
-      HomeAddress: address,
-      PatientID: patient.PatientID,
-    });
     fetch(`${baseURL}/admin/patients/update`, requestOptions).then((response) =>
       response.json()
     );

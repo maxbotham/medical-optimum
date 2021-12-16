@@ -158,7 +158,6 @@ const AddEmployee = ({ type }) => {
       requestOptions
     )
       .then((response) => response.json())
-      .then((data) => console.log(data));
   };
   const defaultValue = null;
   return (
@@ -467,7 +466,6 @@ const Selected = ({ setSelected, selected, type }) => {
       },
       body: JSON.stringify(queryParams),
     };
-    console.log(queryParams);
     fetch(`${baseURL}/admin/hospital/employee/${type.toLowerCase()}`, requestOptions).then(
       (response) => response.json()
     );
