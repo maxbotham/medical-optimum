@@ -5,15 +5,20 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import baseURL from "../../BaseURL";
 const EditPatient = ({ patient }) => {
-  
   const [name, setName] = useState(patient.FullName);
   const [phone, setPhone] = useState(patient.PhoneNumber);
   const [address, setAddress] = useState(patient.HomeAddress);
   const [emergName, setEmergName] = useState(patient.emergContact.FullName);
-  const [emergAddress, setEmergAddress] = useState(patient.emergContact.HomeAddress);
-  const [emergPhone, setEmergPhone] = useState(patient.emergContact.PhoneNumber);
+  const [emergAddress, setEmergAddress] = useState(
+    patient.emergContact.HomeAddress
+  );
+  const [emergPhone, setEmergPhone] = useState(
+    patient.emergContact.PhoneNumber
+  );
   const [emergEmail, setEmergEmail] = useState(patient.emergContact.Email);
-  const [emergRelation, setEmergRelation] = useState(patient.emergContact.Relation);
+  const [emergRelation, setEmergRelation] = useState(
+    patient.emergContact.Relation
+  );
   const [gender, setGender] = useState(patient.Gender);
 
   const changeAddress = (props) => {
@@ -80,7 +85,48 @@ const EditPatient = ({ patient }) => {
     }
   };
 
-  const submitForm = () => {};
+  const submitForm = () => {
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Gender: gender,
+        FullName: name,
+        PhoneNumber: phone,
+        HomeAddress: address,
+        PatientID: patient.PatientID,
+      }),
+    };
+    console.log({
+      Gender: gender,
+      FullName: name,
+      PhoneNumber: phone,
+      HomeAddress: address,
+      PatientID: patient.PatientID,
+    });
+    fetch(`${baseURL}/admin/patients/update`, requestOptions).then((response) =>
+      response.json()
+    );
+    const secondReqOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        FullName: emergName,
+        Email: emergEmail,
+        PhoneNumber: emergPhone,
+        HomeAddress: emergAddress,
+        Relation: emergRelation,
+        PatientID: patient.PatientID,
+      }),
+    };
+    fetch(`${baseURL}/admin/patients/updateec`, secondReqOptions).then(
+      (response) => response.json()
+    );
+  };
   return (
     <div className="register-patient-form">
       <div className="patient-title">Patient Information</div>

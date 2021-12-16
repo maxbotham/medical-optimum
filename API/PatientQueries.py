@@ -801,7 +801,7 @@ def update_patient(patient):
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("UPDATE PATIENT SET Gender = ?, FullName = ?, PhoneNumber = ?, HomeAddress = ?, WHERE PatientID = ?",
+        cur.execute("UPDATE PATIENT SET Gender = ?, FullName = ?, PhoneNumber = ?, HomeAddress = ? WHERE PatientID = ?",
                     (patient["Gender"], patient["FullName"],
                      patient["PhoneNumber"], patient["HomeAddress"],
                      patient["PatientID"],))
@@ -823,10 +823,10 @@ def update_EC(EC):
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        cur.execute("UPDATE EMERGENCY_CONTACT SET FullName = ?, Email = ?, PhoneNumber = ?, HomeAddress = ?, Relation = ? WHERE PatientID = ? AND ContactID = ?",
+        cur.execute("UPDATE EMERGENCY_CONTACT SET FullName = ?, Email = ?, PhoneNumber = ?, HomeAddress = ?, Relation = ? WHERE PatientID = ?",
                     (EC["FullName"], EC["Email"],
                      EC["PhoneNumber"], EC["HomeAddress"], EC["Relation"],
-                     EC["PatientID"], EC["ContactID"],))
+                     EC["PatientID"],))
         conn.commit()
         # return the patient
 
