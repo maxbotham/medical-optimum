@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
-import RangePicker from "react-range-picker";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import DatePicker from "react-datepicker";
 import "./styles/searchService.css";
+import baseURL from "../../BaseURL";
 const SearchService = ({ patient }) => {
   const [type, setType] = useState(null);
   const [didSearch, setDidSearch] = useState(false);
-  const [searchInput, setSearchInput] = useState(null);
+  const [searchInput, setSearchInput] = useState({
+    doctorName: "",
+    medicineName: "",
+    equipmentName: "",
+  });
   const [searchResults, setSearchResults] = useState(null);
   const [selected, setSelected] = useState(null);
   const handleChange = (event) => {
@@ -40,16 +44,12 @@ const SearchService = ({ patient }) => {
             </Select>
           </FormControl>
         </div>
-        <div className="add-service-date-range">
-          {/*todo connect this to state and also figure out how to change year?*/}
-          <RangePicker />
-        </div>
       </div>
       {type === "Prescription" ||
       type === "Consultation" ||
       type === "Procedure" ? (
         <InputForm
-          {...{ type, setSearchInput, searchInput, setSearchResults }}
+          {...{ patient, type, setSearchInput, searchInput, setSearchResults }}
         />
       ) : (
         <></>
@@ -57,15 +57,23 @@ const SearchService = ({ patient }) => {
       {searchResults === null ? (
         <></>
       ) : selected === null ? (
-        <SearchResults {...{ searchResults, setSelected, setSearchResults }} />
+        <SearchResults
+          {...{ type, searchResults, setSelected, setSearchResults }}
+        />
       ) : (
-        <Selected {...{ setSelected, selected }} />
+        <Selected {...{ type, setSelected, selected }} />
       )}
     </div>
   );
 };
 
-const InputForm = ({ type, setSearchInput, searchInput, setSearchResults }) => {
+const InputForm = ({
+  patient,
+  type,
+  setSearchInput,
+  searchInput,
+  setSearchResults,
+}) => {
   const onChange = (props) => {
     if (type === "Consultation") {
       if (props.target.id === "doctor-full-name") {
@@ -98,7 +106,47 @@ const InputForm = ({ type, setSearchInput, searchInput, setSearchResults }) => {
     }
   };
   const submitForm = () => {
-    setSearchResults(["Test", "test", "test", "test2", "test5"]);
+    let queryParams = "";
+    if (type === "Prescription") {
+      queryParams = `${
+        searchInput.doctorName === null || searchInput.doctorName === ""
+          ? "null"
+          : searchInput.doctorName
+      };${
+        searchInput.medicineName === null || searchInput.medicineName === ""
+          ? "null"
+          : searchInput.medicineName
+      };${patient.PatientID}`;
+    } else if (type === "Consultation") {
+      queryParams = `${
+        searchInput.doctorName === null || searchInput.doctorName === ""
+          ? "null"
+          : searchInput.doctorName
+      };${patient.PatientID}`;
+    } else {
+      queryParams = `${
+        searchInput.doctorName === null || searchInput.doctorName === ""
+          ? "null"
+          : searchInput.doctorName
+      };${
+        searchInput.equipmentName === null || searchInput.equipmentName === ""
+          ? "null"
+          : searchInput.equipmentName
+      };${patient.PatientID}`;
+    }
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": queryParams,
+      },
+    };
+    fetch(
+      `${baseURL}/admin/patients/search${type.toLowerCase()}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => setSearchResults(data));
   };
   return (
     <div>
@@ -148,14 +196,28 @@ const InputForm = ({ type, setSearchInput, searchInput, setSearchResults }) => {
   );
 };
 
-const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
+const SearchResults = ({
+  type,
+  searchResults,
+  setSelected,
+  setSearchResults,
+}) => {
   let medicineList = searchResults.map((item, index) => {
     const setSelectedFunc = () => {
       setSelected(item);
     };
     return (
       <div onClick={setSelectedFunc} className="doctor-result-item">
-        {item}
+        {type === "Procedure"
+          ? "Item: " + item.EquipmentName
+          : type === "Prescription"
+          ? "Item: " + item.MedicineName
+          : "Doctor: " + item.DoctorName}
+        {type === "Procedure"
+          ? ". Date: " + item.ProcedureDate
+          : type === "Prescription"
+          ? ". Date: " + item.PrescriptionDate
+          : ". Date: " + item.ConsultationDate}
       </div>
     );
   });
@@ -180,24 +242,14 @@ const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
   );
 };
 
-const Selected = ({ setSelected, selected }) => {
-  const [selectedDate, setSelectedDate] = useState(null);
-  //useState(selected.selectedDate);
-
+const Selected = ({ type, setSelected, selected }) => {
   const unselect = () => {
     setSelected(null);
-  };
-  const save = () => {
-    //connect to API and save state
-  };
-  const remove = () => {
-    //delete record from API
   };
 
   const [] = useState(false);
   return (
     <div className="selected-doctor-wrapper">
-      <div className="selected-service-desc">You have selected: {selected}</div>
       <Button
         variant="contained"
         onClick={unselect}
@@ -205,25 +257,38 @@ const Selected = ({ setSelected, selected }) => {
       >
         Unselect
       </Button>
-      <div className="selected-service-edit-date">Edit Date</div>
-      <DatePicker
-        selected={selectedDate}
-        onChange={(date) => setSelectedDate(date)}
-      />
-      <Button
-        variant="contained"
-        onClick={save}
-        className="sign-out-button search-service-save-service"
-      >
-        Save Changes
-      </Button>
-      <Button
-        variant="contained"
-        onClick={remove}
-        className="sign-out-button search-service-delete-service"
-      >
-        Delete Service
-      </Button>
+      <div className="selected-service-values">
+        {type === "Procedure" ? (
+          <></>
+        ) : (
+          <div className="selected-service-value">
+            {type === "Consultation"
+              ? "Price: $" + selected.Price
+              : "Quantity: " + selected.Quantity}
+          </div>
+        )}
+        <div className="selected-service-value">
+          Doctor: {selected.DoctorName}
+        </div>
+        <div className="selected-service-value">
+          {type === "Procedure"
+            ? "Date: " + selected.ProcedureDate
+            : type === "Prescription"
+            ? "Date: " + selected.PrescriptionDate
+            : "Date: " + selected.ConsultationDate}{" "}
+        </div>
+        {type === "Procedure" ? (
+          <div className="selected-service-value">
+            Equipment: {selected.EquipmentName}
+          </div>
+        ) : type === "Prescription" ? (
+          <div className="selected-service-value">
+            Medicine: {selected.MedicineName}
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 };

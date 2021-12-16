@@ -3,32 +3,29 @@ import { TextField, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import baseURL from "../../BaseURL";
+const EditPatient = ({ patient }) => {
+  const [name, setName] = useState(patient.FullName);
+  const [phone, setPhone] = useState(patient.PhoneNumber);
+  const [address, setAddress] = useState(patient.HomeAddress);
+  const [emergName, setEmergName] = useState(patient.emergContact.FullName);
+  const [emergAddress, setEmergAddress] = useState(
+    patient.emergContact.HomeAddress
+  );
+  const [emergPhone, setEmergPhone] = useState(
+    patient.emergContact.PhoneNumber
+  );
+  const [emergEmail, setEmergEmail] = useState(patient.emergContact.Email);
+  const [emergRelation, setEmergRelation] = useState(
+    patient.emergContact.Relation
+  );
+  const [gender, setGender] = useState(patient.Gender);
 
-const EditPatient = () => {
-  const [name, setName] = useState("Temporary");
-  const [phone, setPhone] = useState("Temporary");
-  const [address, setAddress] = useState("Temporary");
-  const [status, setStatus] = useState("Temporary");
-  const [visitDate, setVisitDate] = useState(null);
-  const [emergName, setEmergName] = useState("Temporary");
-  const [emergAddress, setEmergAddress] = useState("Temporary");
-  const [emergPhone, setEmergPhone] = useState("Temporary");
-  const [emergEmail, setEmergEmail] = useState("Temporary");
-  const [emergRelation, setEmergRelation] = useState("Temporary");
-  const [value, setValue] = useState(null);
-  const [birthday, setBirthday] = useState(null);
   const changeAddress = (props) => {
     if (props.target.value === "") {
       setAddress(null);
     } else {
       setAddress(props.target.value);
-    }
-  };
-  const changeStatus = (props) => {
-    if (props.target.value === "") {
-      setStatus(null);
-    } else {
-      setStatus(props.target.value);
     }
   };
   const changePhone = (props) => {
@@ -43,6 +40,13 @@ const EditPatient = () => {
       setName(null);
     } else {
       setName(props.target.value);
+    }
+  };
+  const changeGender = (props) => {
+    if (props.target.value === "") {
+      setGender(null);
+    } else {
+      setGender(props.target.value);
     }
   };
   const changeEmergName = (props) => {
@@ -81,7 +85,48 @@ const EditPatient = () => {
     }
   };
 
-  const submitForm = () => {};
+  const submitForm = () => {
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Gender: gender,
+        FullName: name,
+        PhoneNumber: phone,
+        HomeAddress: address,
+        PatientID: patient.PatientID,
+      }),
+    };
+    console.log({
+      Gender: gender,
+      FullName: name,
+      PhoneNumber: phone,
+      HomeAddress: address,
+      PatientID: patient.PatientID,
+    });
+    fetch(`${baseURL}/admin/patients/update`, requestOptions).then((response) =>
+      response.json()
+    );
+    const secondReqOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        FullName: emergName,
+        Email: emergEmail,
+        PhoneNumber: emergPhone,
+        HomeAddress: emergAddress,
+        Relation: emergRelation,
+        PatientID: patient.PatientID,
+      }),
+    };
+    fetch(`${baseURL}/admin/patients/updateec`, secondReqOptions).then(
+      (response) => response.json()
+    );
+  };
   return (
     <div className="register-patient-form">
       <div className="patient-title">Patient Information</div>
@@ -91,7 +136,7 @@ const EditPatient = () => {
           label="Full Name"
           variant="outlined"
           onChange={changeName}
-          defaultValue="Temporary"
+          defaultValue={name}
         />
       </div>
       <div className="patient-register-input">
@@ -100,7 +145,7 @@ const EditPatient = () => {
           label="Phone Number"
           variant="outlined"
           onChange={changePhone}
-          defaultValue="Temporary"
+          defaultValue={phone}
         />
       </div>
       <div className="patient-register-input">
@@ -109,32 +154,16 @@ const EditPatient = () => {
           id="outlined-basic"
           label="Address"
           variant="outlined"
-          defaultValue="Temporary"
+          defaultValue={address}
         />
       </div>
       <div className="patient-register-input">
         <TextField
-          onChange={changeStatus}
+          onChange={changeGender}
           id="outlined-basic"
-          label="Status"
+          label="Gender"
           variant="outlined"
-          defaultValue="Temporary"
-        />
-      </div>
-      <div className="patient-register-input patient-date-pick">
-        <div style={{ marginBottom: ".3rem" }}>Birthday</div>
-        <DatePicker
-          selected={birthday}
-          onChange={(date) => setBirthday(date)}
-          defaultValue="temporary"
-        />
-      </div>
-      <div className="patient-register-input patient-date-pick">
-        <div style={{ marginBottom: ".3rem" }}>Visit Date</div>
-        <DatePicker
-          selected={visitDate}
-          onChange={(date) => setVisitDate(date)}
-          defaultValue="temporary"
+          defaultValue={gender}
         />
       </div>
       <div className="emergency-contact-title">
@@ -147,7 +176,7 @@ const EditPatient = () => {
             id="outlined-basic"
             label="Full Name"
             variant="outlined"
-            defaultValue="Temporary"
+            defaultValue={emergName}
           />
         </div>
         <div className="patient-register-emergency">
@@ -156,7 +185,7 @@ const EditPatient = () => {
             id="outlined-basic"
             label="Email Address"
             variant="outlined"
-            defaultValue="Temporary"
+            defaultValue={emergEmail}
           />
         </div>
         <div className="patient-register-emergency">
@@ -165,7 +194,7 @@ const EditPatient = () => {
             id="outlined-basic"
             label="Address"
             variant="outlined"
-            defaultValue="Temporary"
+            defaultValue={emergAddress}
           />
         </div>
         <div className="patient-register-emergency">
@@ -174,7 +203,7 @@ const EditPatient = () => {
             id="outlined-basic"
             label="Phone Number"
             variant="outlined"
-            defaultValue="Temporary"
+            defaultValue={emergPhone}
           />
         </div>
         <div className="patient-register-emergency">
@@ -183,7 +212,7 @@ const EditPatient = () => {
             id="outlined-basic"
             label="Relation"
             variant="outlined"
-            defaultValue="Temporary"
+            defaultValue={emergRelation}
           />
         </div>
       </div>
@@ -195,14 +224,12 @@ const EditPatient = () => {
           disabled={
             name === null ||
             address === null ||
-            status === null ||
-            visitDate === null ||
             emergName === null ||
+            gender === null ||
             emergAddress === null ||
             emergPhone === null ||
             emergEmail === null ||
-            emergRelation === null ||
-            birthday === null
+            emergRelation === null
           }
         >
           Save Changes
@@ -211,4 +238,5 @@ const EditPatient = () => {
     </div>
   );
 };
+
 export default EditPatient;
