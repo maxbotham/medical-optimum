@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
 import DatePicker from "react-datepicker";
 import InputLabel from "@mui/material/InputLabel";
@@ -8,6 +8,8 @@ import Select from "@mui/material/Select";
 import SearchDepartment from "../../../search/searchDepartment";
 import "../inventory/styles/inventoryPage.css";
 import "./styles/employeePage.css";
+import baseURL from "../../../BaseURL";
+
 const EmployeePage = ({ patient }) => {
   const [type, setType] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
@@ -72,7 +74,7 @@ const EmployeePage = ({ patient }) => {
             <></>
           ) : selected === null ? (
             <SearchResults
-              {...{ searchResults, setSelected, setSearchResults }}
+              {...{ type, searchResults, setSelected, setSearchResults }}
             />
           ) : (
             <Selected {...{ setSelected, selected, type }} />
@@ -111,7 +113,52 @@ const AddEmployee = ({ type }) => {
     setUsername(props.target.value);
   };
   const add = () => {
-    //add this medicine/equipment to api
+    let bodyParams = {};
+    const today = new Date();
+    const startDate = today.toISOString().split("T")[0];
+    const dateOfBirth = dob.toISOString().split("T")[0];
+
+    if (type === "Doctor") {
+      bodyParams = {
+        DoctorName: name,
+        Salary: salary,
+        DOB: dateOfBirth,
+        StartDate: startDate,
+        DeptID: department.DeptID,
+        Specialty: specialty,
+      };
+    } else if (type === "Admin") {
+      bodyParams = {
+        AdminName: name,
+        Salary: salary,
+        DOB: dateOfBirth,
+        StartDate: startDate,
+        DBAccessUsername: username,
+        DBAccessPassword: password,
+      };
+    } else if (type === "Receptionist") {
+      bodyParams = {
+        RecepName: name,
+        Salary: salary,
+        DOB: dateOfBirth,
+        StartDate: startDate,
+        DBAccessUsername: username,
+        DBAccessPassword: password,
+      };
+    }
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyParams),
+    };
+    fetch(
+      `${baseURL}/admin/hospital/employee/${type.toLowerCase()}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => console.log(data));
   };
   const defaultValue = null;
   return (
@@ -199,29 +246,55 @@ const AddEmployee = ({ type }) => {
 const InputForm = ({ type, setSearchResults }) => {
   const [name, setName] = useState(null);
   const [id, setID] = useState(null);
-  const [dayOfBirth, setDayOfBirth] = useState(null);
-  const [monthOfBirth, setMonthOfBirth] = useState(null);
-  const [yearOfBirth, setYearOfBirth] = useState(null);
   const [specialty, setSpecialty] = useState(null);
 
   const onChange = (props) => {
     if (props.target.id === "name") {
-      setName(props.target.value);
+      if (props.target.value === "") {
+        setName(null);
+      } else {
+        setName(props.target.value);
+      }
     } else if (props.target.id === "id") {
-      setID(props.target.value);
-    } else if (props.target.id === "dayOfBirth") {
-      setDayOfBirth(props.target.value);
-    } else if (props.target.id === "monthOfBirth") {
-      setMonthOfBirth(props.target.value);
-    } else if (props.target.id === "yearOfBirth") {
-      setYearOfBirth(props.target.value);
+      if (props.target.value === "") {
+        setID(null);
+      } else {
+        setID(props.target.value);
+      }
     } else if (props.target.id === "specialty") {
-      setSpecialty(props.target.value);
+      if (props.target.value === "") {
+        setSpecialty(null);
+      } else {
+        setSpecialty(props.target.value);
+      }
     }
   };
   const submitForm = () => {
-    //connect to API here
-    setSearchResults(["Test", "test", "test", "test2", "test5"]);
+    let queryParams = "";
+    if (type.toLowerCase() === "doctor") {
+      queryParams = `${id === null ? "null" : id};${
+        name === null ? "null" : name
+      };${specialty === null ? "null" : specialty}`;
+    } else {
+      queryParams = `${id === null ? "null" : id};${
+        name === null ? "null" : name
+      }`;
+    }
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": queryParams,
+      },
+    };
+    fetch(
+      `${baseURL}/admin/hospital/employee/${type.toLowerCase()}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   return (
     <div>
@@ -232,30 +305,6 @@ const InputForm = ({ type, setSearchResults }) => {
           <TextField
             id="name"
             label="Name"
-            variant="outlined"
-            onChange={onChange}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="dayOfBirth"
-            label="Day of Birth"
-            variant="outlined"
-            onChange={onChange}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="monthOfBirth"
-            label="Month of Birth"
-            variant="outlined"
-            onChange={onChange}
-          />
-        </div>
-        <div className="search-doctor-input">
-          <TextField
-            id="yearOfBirth"
-            label="Year of Birth"
             variant="outlined"
             onChange={onChange}
           />
@@ -294,14 +343,27 @@ const InputForm = ({ type, setSearchResults }) => {
   );
 };
 
-const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
+const SearchResults = ({
+  type,
+  searchResults,
+  setSelected,
+  setSearchResults,
+}) => {
   let medicineList = searchResults.map((item, index) => {
     const setSelectedFunc = () => {
       setSelected(item);
     };
+    let text = "";
+    if (type.toLowerCase() === "doctor") {
+      text = item.DoctorName;
+    } else if (type.toLowerCase() === "admin") {
+      text = item.AdminName;
+    } else {
+      text = item.RecepName;
+    }
     return (
       <div onClick={setSelectedFunc} className="doctor-result-item">
-        {item}
+        {text}
       </div>
     );
   });
@@ -327,19 +389,88 @@ const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
 };
 
 const Selected = ({ setSelected, selected, type }) => {
-  const [name, setName] = useState("Temp");
-  //useState(selected.name);
-  const [salary, setSalary] = useState("30,000");
-  const [username, setUsername] = useState("maxTemp");
-  const [password, setPassword] = useState("asdfasdf");
-  const [specialty, setSpecialty] = useState("Temp");
-  const [department, setDepartment] = useState("Temporary");
-  const defaultValue = selected;
+  let defaultName = "";
+  let defaultUsername = "";
+  let defaultPassword = "";
+  let defaultSpecialty = "";
+  let defaultDepartment = "";
+  const [defaultValue, setDefaultValue] = useState(null);
+  if (defaultValue === null) {
+    if (type.toLowerCase() === "admin") {
+      defaultName = selected.AdminName;
+      defaultUsername = selected.DBAccessUsername;
+      defaultPassword = selected.DBAccessPassword;
+    } else if (type.toLowerCase() === "doctor") {
+      defaultName = selected.DoctorName;
+      defaultSpecialty = selected.Specialty;
+      defaultDepartment = selected.DeptID;
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Query-Params": `${selected.DeptID};null`,
+        },
+      };
+      fetch(`${baseURL}/admin/hospital/department`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          setDefaultValue(data[0]);
+        });
+    } else {
+      defaultName = selected.RecepName;
+      defaultUsername = selected.DBAccessUsername;
+      defaultPassword = selected.DBAccessPassword;
+    }
+  }
+
+  const [name, setName] = useState(defaultName);
+  const [salary, setSalary] = useState(selected.Salary);
+  const [username, setUsername] = useState(defaultUsername);
+  const [password, setPassword] = useState(defaultPassword);
+  const [specialty, setSpecialty] = useState(defaultSpecialty);
+  const [department, setDepartment] = useState(defaultDepartment);
+
   const unselect = () => {
     setSelected(null);
   };
   const save = () => {
-    //connect to API and save state
+    let queryParams = {};
+    if (type === "Doctor") {
+      queryParams = {
+        DoctorName: name,
+        Salary: salary,
+        Specialty: specialty,
+        DeptID: department.DeptID,
+        DoctorID: selected.DoctorID
+      };
+    } else if (type === "Admin") {
+      queryParams = {
+        AdminName: name,
+        Salary: salary,
+        DBAccessUsername: username,
+        DBAccessPassword: password,
+        AdminID: selected.AdminID
+      };
+    } else {
+      queryParams = {
+        RecepName: name,
+        Salary: salary,
+        DBAccessUsername: username,
+        DBAccessPassword: password,
+        RecepID: selected.RecepID
+      };
+    }
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(queryParams),
+    };
+    console.log(queryParams);
+    fetch(`${baseURL}/admin/hospital/employee/${type.toLowerCase()}`, requestOptions).then(
+      (response) => response.json()
+    );
   };
 
   const changeSpecialty = (props) => {
@@ -361,7 +492,9 @@ const Selected = ({ setSelected, selected, type }) => {
   const [] = useState(false);
   return (
     <div className="selected-doctor-wrapper">
-      <div className="selected-service-desc">You have selected: {selected}</div>
+      <div className="selected-service-desc">
+        You have selected: {defaultName}
+      </div>
       <Button
         variant="contained"
         onClick={unselect}
@@ -419,7 +552,7 @@ const Selected = ({ setSelected, selected, type }) => {
           <></>
         )}
       </div>
-      {type === "Doctor" ? (
+      {defaultValue !== null ? (
         <SearchDepartment {...{ setDepartment, defaultValue }} />
       ) : (
         <></>

@@ -2,60 +2,63 @@ import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import "./styles/admitPatient.css";
 import DatePicker from "react-datepicker";
+import baseURL from "../../BaseURL";
 const InventoryPage = ({ patient }) => {
   const [searchResults, setSearchResults] = useState(null);
   const [selected, setSelected] = useState(null);
   const [type, setType] = useState(null);
   const [id, setID] = useState(null);
-  const [discharge, setDischarge] = useState(null);
-  const [status, setStatus] = useState(null);
   const [bedSelected, setBedSelected] = useState(null);
   const changeType = (props) => {
-    setType(props.target.value);
+    if (props.target.value === "") {
+      setType(null);
+    } else {
+      setType(props.target.value);
+    }
   };
   const changeID = (props) => {
-    setID(props.target.value);
-  };
-  const changeStatus = (props) => {
     if (props.target.value === "") {
-      setStatus(null);
+      setID(null);
     } else {
-      setStatus(props.target.value);
+      setID(props.target.value);
     }
   };
   const submitForm = () => {
-    setSearchResults([
-      "Ward One",
-      "Ward Two",
-      "Ward Temp",
-      "Test Ward",
-      "Temp Ward",
-    ]);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${id === null ? "null" : id};${
+          type === null ? "null" : type
+        }`,
+      },
+    };
+    fetch(`${baseURL}/admin/hospital/ward`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   const submitAdmitPatient = () => {
-    //connect to api and admit patient
+    console.log(patient.PatientID);
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        PatientID: patient.PatientID,
+        BedNumber: bedSelected.bedNumber,
+      }),
+    };
+    fetch(`${baseURL}/admin/patients/admit`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   return (
     <div>
-      <div style={{ marginTop: "1rem", marginBottom: ".5rem" }}>
-        Discharge Date
-      </div>
-      <DatePicker
-        selected={discharge}
-        onChange={(date) => setDischarge(date)}
-      />
-      <div
-        style={{ marginTop: "1rem", marginBottom: "1rem" }}
-        className="search-ward-input"
-      >
-        <TextField
-          id="status"
-          label="Status"
-          variant="outlined"
-          onChange={changeStatus}
-        />
-      </div>
-
       <div style={{ marginTop: "1rem" }}>Ward Information</div>
       <div className="search-ward-parameters">
         <div className="search-ward-input">
@@ -101,9 +104,7 @@ const InventoryPage = ({ patient }) => {
           variant="contained"
           onClick={submitAdmitPatient}
           className="sign-out-button"
-          disabled={
-            bedSelected === null || status === null || discharge === null
-          }
+          disabled={bedSelected === null}
         >
           Admit Patient
         </Button>
@@ -119,7 +120,7 @@ const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
     };
     return (
       <div onClick={setSelectedFunc} className="doctor-result-item">
-        {item}
+        {item.WardType}
       </div>
     );
   });
@@ -154,34 +155,20 @@ const SelectedWard = ({
   const unselect = () => {
     setSelected(null);
   };
-  const tempBeds = [
-    { bedNumber: "0", status: "Vacant", price: "49", patient: "Madeup Name" },
-    {
-      bedNumber: "1",
-      status: "Occupied",
-      price: "39",
-      patient: "Mango Habanero",
-    },
-    {
-      bedNumber: "2",
-      status: "Occupied",
-      price: "39",
-      patient: "Chocolate Cream",
-    },
-    { bedNumber: "4", status: "Vacant", price: "99", patient: "Cinnamon Bun" },
-    {
-      bedNumber: "5",
-      status: "Occupied",
-      price: "79",
-      patient: "Chocolate Mousse",
-    },
-  ];
+  const tempBeds = selected.Beds.map((item, index) => {
+    return {
+      bedNumber: item.BedNumber,
+      status: item.PatientID === null ? "Empty" : "Occupied",
+      price: item.Price,
+      patient: item.PatientID,
+    };
+  });
   //const beds = selected.beds.map(...)
   let beds = tempBeds.map((item, index) => {
     const setSelectedFunc = () => {
       setBedSelected(item);
     };
-    if (item.status === "Vacant") {
+    if (item.status === "Empty") {
       return (
         <div onClick={setSelectedFunc} className="bed-result-item">
           Bed number {item.bedNumber}. Status: {item.status}. Price:{" "}
@@ -207,7 +194,7 @@ const SelectedWard = ({
       {bedSelected === null ? (
         <>
           <div className="selected-ward-bed-list-title">
-            List of Beds in {selected}
+            List of Beds in {selected.WardType}
           </div>
           <div className="bed-list">{beds}</div>
         </>

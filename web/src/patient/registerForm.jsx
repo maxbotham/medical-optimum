@@ -8,13 +8,11 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-
+import baseURL from "../BaseURL";
 const RegisterForm = () => {
   const [name, setName] = useState(null);
   const [phone, setPhone] = useState(null);
   const [address, setAddress] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [visitDate, setVisitDate] = useState(null);
   const [emergName, setEmergName] = useState(null);
   const [emergAddress, setEmergAddress] = useState(null);
   const [emergPhone, setEmergPhone] = useState(null);
@@ -24,6 +22,21 @@ const RegisterForm = () => {
   const [type, setType] = useState(null);
   const [insurance, setInsurance] = useState(null);
   const [paymentEmail, setPaymentEmail] = useState(null);
+  const [gender, setGender] = useState(null);
+  const [insuranceList, setInsuranceList] = useState(null);
+  if (insuranceList === null) {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    fetch(`${baseURL}/admin/patients/insurance`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setInsuranceList(data);
+      });
+  }
   const changePaymentEmail = (props) => {
     if (props.target.value === "") {
       setPaymentEmail(null);
@@ -52,13 +65,6 @@ const RegisterForm = () => {
       setAddress(null);
     } else {
       setAddress(props.target.value);
-    }
-  };
-  const changeStatus = (props) => {
-    if (props.target.value === "") {
-      setStatus(null);
-    } else {
-      setStatus(props.target.value);
     }
   };
   const changePhone = (props) => {
@@ -110,8 +116,42 @@ const RegisterForm = () => {
       setEmergRelation(props.target.value);
     }
   };
+  const changeGender = (props) => {
+    if (props.target.value === "") {
+      setGender(null);
+    } else {
+      setGender(props.target.value);
+    }
+  };
 
-  const submitForm = () => {};
+  const submitForm = () => {
+    let bodyParams = {
+      Gender: gender,
+      FullName: name,
+      PhoneNumber: phone,
+      HomeAddress: address,
+      DOB: birthday.toISOString().split("T")[0],
+      PayerType: type,
+      Email: paymentEmail,
+      Insurance: insurance,
+      ECFullName: emergName,
+      ECEmail: emergEmail,
+      ECHomeAddress: emergAddress,
+      ECPhoneNumber: emergPhone,
+      ECRelation: emergRelation,
+      VisitDate: new Date().toISOString().split("T")[0],
+    };
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyParams),
+    };
+    fetch(`${baseURL}/admin/patients/register`, requestOptions).then(
+      (response) => response.json()
+    );
+  };
   return (
     <div className="register-patient-form">
       <div className="patient-title">Patient Information</div>
@@ -139,18 +179,19 @@ const RegisterForm = () => {
           variant="outlined"
         />
       </div>
+      <div className="patient-register-input">
+        <TextField
+          onChange={changeGender}
+          id="outlined-basic"
+          label="Gender"
+          variant="outlined"
+        />
+      </div>
       <div className="patient-register-input patient-date-pick">
         <div style={{ marginBottom: ".3rem" }}>Birthday</div>
         <DatePicker
           selected={birthday}
           onChange={(date) => setBirthday(date)}
-        />
-      </div>
-      <div className="patient-register-input patient-date-pick">
-        <div style={{ marginBottom: ".3rem" }}>Visit Date</div>
-        <DatePicker
-          selected={visitDate}
-          onChange={(date) => setVisitDate(date)}
         />
       </div>
       <div className="emergency-contact-title">Payment Information</div>
@@ -185,10 +226,9 @@ const RegisterForm = () => {
                 label="Insurance Provider"
                 onChange={changeIsurance}
               >
-                <MenuItem value={"Temp"}>Temp</MenuItem>
-                <MenuItem value={"Temp2"}>Temp2</MenuItem>
-                <MenuItem value={"Placeholder"}>Placeholder</MenuItem>
-                <MenuItem value={"Placeholder2"}>Placeholder2</MenuItem>
+                {insuranceList.map((item) => {
+                  return <MenuItem value={item.PayerID}>{item.Name}</MenuItem>;
+                })}
               </Select>
             </FormControl>
           </div>
@@ -260,14 +300,13 @@ const RegisterForm = () => {
           disabled={
             name === null ||
             address === null ||
-            status === null ||
-            visitDate === null ||
             emergName === null ||
             emergAddress === null ||
             emergPhone === null ||
             emergEmail === null ||
             emergRelation === null ||
             birthday === null ||
+            gender === null ||
             type === null ||
             (type === "Insurance" && insurance === null) ||
             (type === "Direct" && paymentEmail === null)

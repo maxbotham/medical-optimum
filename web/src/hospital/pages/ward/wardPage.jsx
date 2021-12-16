@@ -5,26 +5,41 @@ import InputLabel from "@mui/material/InputLabel";
 import SearchDepartment from "../../../search/searchDepartment";
 import "../inventory/styles/inventoryPage.css";
 import "./styles/wardPage.css";
-
+import baseURL from "../../../BaseURL";
 const InventoryPage = ({ patient }) => {
   const [searchResults, setSearchResults] = useState(null);
   const [selected, setSelected] = useState(null);
   const [type, setType] = useState(null);
   const [id, setID] = useState(null);
   const changeType = (props) => {
-    setType(props.target.value);
+    if (props.target.value === "") {
+      setType(null);
+    } else {
+      setType(props.target.value);
+    }
   };
   const changeID = (props) => {
-    setID(props.target.value);
+    if (props.target.value === "") {
+      setID(null);
+    } else {
+      setID(props.target.value);
+    }
   };
   const submitForm = () => {
-    setSearchResults([
-      "Ward One",
-      "Ward Two",
-      "Ward Temp",
-      "Test Ward",
-      "Temp Ward",
-    ]);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${id === null ? "null" : id};${
+          type === null ? "null" : type
+        }`,
+      },
+    };
+    fetch(`${baseURL}/admin/hospital/ward`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   return (
     <div>
@@ -74,7 +89,7 @@ const SearchResults = ({ searchResults, setSelected, setSearchResults }) => {
     };
     return (
       <div onClick={setSelectedFunc} className="doctor-result-item">
-        {item}
+        {item.WardType}
       </div>
     );
   });
@@ -105,29 +120,14 @@ const SelectedWard = ({ setSelected, selected }) => {
   const unselect = () => {
     setSelected(null);
   };
-  const tempBeds = [
-    { bedNumber: "0", status: "Vacant", price: "49", patient: "Madeup Name" },
-    {
-      bedNumber: "1",
-      status: "Occupied",
-      price: "39",
-      patient: "Mango Habanero",
-    },
-    {
-      bedNumber: "2",
-      status: "Occupied",
-      price: "39",
-      patient: "Chocolate Cream",
-    },
-    { bedNumber: "4", status: "Vacant", price: "99", patient: "Cinnamon Bun" },
-    {
-      bedNumber: "5",
-      status: "Occupied",
-      price: "79",
-      patient: "Chocolate Mousse",
-    },
-  ];
-  //const beds = selected.beds.map(...)
+  const tempBeds = selected.Beds.map((item, index) => {
+    return {
+      bedNumber: item.BedNumber,
+      status: item.PatientID === null ? "Empty" : "Occupied",
+      price: item.Price,
+      patient: item.PatientID,
+    };
+  });
   let beds = tempBeds.map((item, index) => {
     const setSelectedFunc = () => {
       setBedSelected(item);
@@ -153,7 +153,7 @@ const SelectedWard = ({ setSelected, selected }) => {
       {bedSelected === null ? (
         <>
           <div className="selected-ward-bed-list-title">
-            List of Beds in {selected}
+            List of Beds in {selected.WardType}
           </div>
           <div className="bed-list">{beds}</div>
         </>
@@ -171,10 +171,18 @@ const SelectedBed = ({ bedSelected, setBedSelected }) => {
     setBedSelected(null);
   };
   const save = () => {
-    //save changes to api
-  };
-  const toggleRemoved = () => {
-    setIsPatient(!isPatient);
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Price: price,
+        BedNumber: bedSelected.bedNumber
+      })
+    };
+    fetch(`${baseURL}/admin/hospital/bed`, requestOptions)
+      .then((response) => response.json())
   };
   const changePrice = (props) => {
     setPrice(props.target.value);
@@ -196,18 +204,7 @@ const SelectedBed = ({ bedSelected, setBedSelected }) => {
       {bedSelected.status !== "Vacant" ? (
         <div className="bed-patient-wrapper">
           <div className="view-patient-in-bed">
-            {isPatient
-              ? "Patient Name: " + bedSelected.patient
-              : "Patient Removed"}
-          </div>
-          <div className="submit-ward-search">
-            <Button
-              variant="contained"
-              onClick={toggleRemoved}
-              className="sign-out-button"
-            >
-              {isPatient ? "Remove Patient" : "Undo Remove Patient"}
-            </Button>
+            {isPatient ? "Patient ID: " + bedSelected.patient : "No patient"}
           </div>
         </div>
       ) : (
