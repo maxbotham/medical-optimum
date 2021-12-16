@@ -1,0 +1,1 @@
+[{"BillID": "B0", "Item": "Consultation", "Total": 20.0, "BillDate": "2021-11-27", "Paid": 0}, {"BillID": "B0", "Item": "Ibuprofen - 3", "Total": 11.97, "BillDate": "2021-11-27", "Paid": 0}, {"BillID": "B0", "Item": "Consultation", "Total": 30.0, "BillDate": "2021-11-28", "Paid": 0}]

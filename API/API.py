@@ -301,6 +301,13 @@ def api_view_bill():
         return jsonify(view_bill(patient))
     return jsonify([])
 
+@app.route('/admin/patients/printbill', methods=['GET'])
+def api_print_bill():
+    patientString = request.headers.get('Query-Params')
+    if(valid_input(patientString)):
+        patient = { "PatientID": patientString }
+        return jsonify(print_bill(patient))
+    return jsonify([])
 # Format for Query-Params is: DoctorName;MedicineName;PatientID
 
 

@@ -1,10 +1,11 @@
 import sqlite3
 import os
+import json
 
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'database/database.db')
 
-
+globalbill = []
 def connect_to_db():
     conn = sqlite3.connect(filename)
     return conn
@@ -76,9 +77,16 @@ def view_bill(patient):
 
     except:
         bill = []
-
+    
     return bill
 
+
+    
+def print_bill(patient):
+    bill = view_bill(patient)
+    with open('ItemizedBill.txt', 'w') as fout:
+        json.dump(bill, fout)
+    return
 
 def add_consultation(consultation):
     # added into bill items (not paid), assume equipment search returns existing quantity
