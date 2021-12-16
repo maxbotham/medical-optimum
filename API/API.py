@@ -215,7 +215,7 @@ def api_get_patient():
     queryHeader = request.headers.get('Query-Params')
     patientArr = queryHeader.split(';')
     patient = {}
-    if(valid_input(patientArr[0]) and valid_input(patientArr[1]) and valid_input(patientArr[2]) and len(patientArr)==3):
+    if(valid_input(patientArr[0]) and valid_input(patientArr[1]) and len(patientArr)==3):
         if patientArr[0] != "null":
             patient["FullName"] = patientArr[0]
         if patientArr[1] != "null":
