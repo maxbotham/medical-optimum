@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button } from "@mui/material";
+import baseURL from "../BaseURL";
 import "./styles/searchEquipment.css";
 const SearchDepartment = ({ setDepartment, defaultValue }) => {
   const [name, setName] = useState(null);
@@ -11,14 +12,35 @@ const SearchDepartment = ({ setDepartment, defaultValue }) => {
     setDepartment(selected);
   }, [selected]);
   const changeName = (props) => {
+    if(props.target.value===''){
+      setName(null)
+    }
+    else{
     setName(props.target.value);
+    }
   };
   const changeID = (props) => {
+    if(props.target.value===''){
+      setID(null)
+    }
+    else{
     setID(props.target.value);
+    }
   };
   const submitForm = () => {
     setDidSearch(true);
-    setSearchResults(["Temporary", "Temp", "StillTemp", "Temp..."]);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${id===null?"null":id};${name===null?"null":name}`,
+      },
+    };
+    fetch(`${baseURL}/admin/hospital/department`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setSearchResults(data);
+      });
   };
   return (
     <div>
@@ -70,7 +92,7 @@ const EquipmentResults = ({ searchResults, setSelected, setDidSearch }) => {
     };
     return (
       <div onClick={setSelectedFunc} className="equipment-result-item">
-        {item}
+        {item.DeptName}
       </div>
     );
   });
@@ -102,7 +124,7 @@ const SelectedEquipment = ({ setSelected, selected }) => {
   return (
     <div className="selected-equipment-wrapper">
       <div className="selected-equipment-title">
-        You have selected: {selected}
+        You have selected: {selected.DeptName}
       </div>
       <Button
         variant="contained"

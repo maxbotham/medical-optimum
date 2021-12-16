@@ -198,6 +198,15 @@ def api_add_patient():
     patient = request.get_json()
     return jsonify(register_patient(patient))
 
+@app.route('/admin/patients/insurance',  methods = ['GET'])
+def api_get_all_insurance():
+    return jsonify(getAllInsurance())
+
+@app.route('/admin/patients/addvisit',  methods = ['POST'])
+def api_add_visit_date():
+    patient = request.get_json()
+    return jsonify(add_visit(patient))
+
 @app.route('/admin/patients/admit',  methods = ['POST'])
 def api_admit_patient():
     patient = request.get_json()

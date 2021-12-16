@@ -13,7 +13,7 @@ const SearchFormResults = ({
     };
     return (
       <div onClick={setSelectedPatientFunc} className="patient-result-item">
-        {item}
+        {item.FullName}
       </div>
     );
   });

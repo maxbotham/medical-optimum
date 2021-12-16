@@ -3,36 +3,50 @@ import { TextField, Button } from "@mui/material";
 import SearchFormResults from "./searchFormResults";
 import SelectedPatient from "./selectedPatient";
 import "./styles/searchForm.css";
+import baseURL from "../BaseURL";
+import DatePicker from 'react-datepicker';
 const SearchForm = () => {
-  const [name, setName] = useState("");
-  const [birthMonth, setBirthMonth] = useState("");
-  const [birthDay, setBirthDay] = useState("");
-  const [birthYear, setBirthYear] = useState("");
+  const [name, setName] = useState(null);
+  const [dob, setDOB] = useState(null);
+  const [id, setID] = useState(null);
   const [isResults, setIsResults] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
-  const changeBirthMonth = (props) => {
-    setBirthMonth(props.target.value);
-  };
-  const changeBirthDay = (props) => {
-    setBirthDay(props.target.value);
-  };
-  const changeBirthYear = (props) => {
-    setBirthYear(props.target.value);
+
+  const changeDOB = (props) => {
+    if (props.target.value === "") {
+      setDOB(null);
+    } else {
+      setDOB(props.target.value);
+    }
   };
   const changeName = (props) => {
-    setName(props.target.value);
+    if (props.target.value === "") {
+      setName(null);
+    } else {
+      setName(props.target.value);
+    }
+  };
+  const changeID = (props) => {
+    if (props.target.value === "") {
+      setID(null);
+    } else {
+      setID(props.target.value);
+    }
   };
   const submitForm = () => {
-    setSearchResults([
-      "Test",
-      "Test1",
-      "Test2",
-      "Test3",
-      "Test4",
-      "Test5",
-      "Tits",
-    ]);
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Query-Params": `${name === null ? "null" : name};${
+          id === null ? "null" : id
+        };${dob === null ? "null" : dob.toISOString().split("T")[0]}`,
+      },
+    };
+    fetch(`${baseURL}/admin/patients/search`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {setSearchResults(data)});
     setIsResults(true);
   };
   return (
@@ -50,27 +64,18 @@ const SearchForm = () => {
         <div className="search-patient-input">
           <TextField
             id="outlined-basic"
-            label="Year of Birth"
+            label="Patient ID"
             variant="outlined"
-            onChange={changeBirthYear}
+            onChange={changeID}
           />
         </div>
-        <div className="search-patient-input">
-          <TextField
-            id="outlined-basic"
-            label="Day of Birth"
-            variant="outlined"
-            onChange={changeBirthDay}
-          />
-        </div>
-        <div className="search-patient-input">
-          <TextField
-            id="outlined-basic"
-            label="Month of Birth"
-            variant="outlined"
-            onChange={changeBirthMonth}
-          />
-        </div>
+      </div>
+      <div className="patient-register-input patient-date-pick">
+        <div style={{ marginBottom: ".3rem" }}>Birthday</div>
+        <DatePicker
+          selected={dob}
+          onChange={(date) => setDOB(date)}
+        />
       </div>
       <div className="submit-search-form">
         <Button
