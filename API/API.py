@@ -174,7 +174,7 @@ def admin_search_department():
     queryHeader = request.headers.get('Query-Params')
     deptArr = queryHeader.split(';')
     department = {}
-    if(valid_input(deptArr[0]) and valid_input(deptArr[1])and len(paramsArr)==2):
+    if(valid_input(deptArr[0]) and valid_input(deptArr[1])and len(deptArr)==2):
         if deptArr[0] != "null":
             department["DeptID"] = deptArr[0]
         if deptArr[1] != "null":
