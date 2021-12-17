@@ -174,19 +174,3 @@ def update_equipment(equipment):
     finally:
         conn.close()
     return {}
-
-def delete_patient(PatientID):
-    message = {}
-    try:
-        conn = connect_to_db()
-        conn.execute("DELETE from PATIENT WHERE PatientID = ?",
-                     (PatientID,))
-        conn.commit()
-        message["status"] = "patient deleted successfully"
-    except:
-        conn.rollback()
-        message["status"] = "Cannot delete patient"
-    finally:
-        conn.close()
-
-    return message

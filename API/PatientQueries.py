@@ -1,6 +1,8 @@
 import sqlite3
 import os
 import json
+from inventory import *
+
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'database/database.db')
 
@@ -129,17 +131,23 @@ def add_prescription(prescription):
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        updatedQuantity = str(
-            int(prescription["Quantity"])-int(prescription["UsedQuantity"]))
+
         cur.execute("Insert into PRESCRIBES (DoctorEmployeeID, PatientID, MedicineID, Quantity,PrescriptionDate) values (?,?,?,?,?)",
-                    (prescription["DoctorEmployeeID"], prescription["PatientID"], prescription["MedicineID"], updatedQuantity, prescription["PrescriptionDate"],))
+                    (prescription["DoctorEmployeeID"], prescription["PatientID"], prescription["MedicineID"], prescription["UsedQuantity"], prescription["PrescriptionDate"],))
         conn.commit()
     except:
         conn.rollback()
 
     finally:
         conn.close()
-
+    updatedQuantity = str(
+        int(prescription["Quantity"])-int(prescription["UsedQuantity"]))
+    medicine = {}
+    medicine["MedicineName"] = getMedName(prescription["MedicineID"])
+    medicine["Quantity"] = updatedQuantity
+    medicine["Price"] = getMedPrice(prescription["MedicineID"])
+    medicine["MedicineID"] = prescription["MedicineID"]
+    update_medicine(medicine);
     item = getMedName(prescription["MedicineID"]) + \
         " - " + prescription["UsedQuantity"]
     total = str(float(getMedPrice(

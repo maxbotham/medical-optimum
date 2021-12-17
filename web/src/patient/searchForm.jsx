@@ -74,7 +74,7 @@ const SearchForm = () => {
       </div>
       <div className="patient-register-input patient-date-pick">
         <div style={{ marginBottom: ".3rem" }}>Birthday</div>
-        <DatePicker selected={dob} onChange={(date) => setDOB(date)} />
+        <DatePicker selected={dob} onChange={(date) => setDOB(date)}/>
       </div>
       <div className="submit-search-form">
         <Button
